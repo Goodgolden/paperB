@@ -1,0 +1,9 @@
+# Preface {.unnumbered}
+
+This is a Quarto book for TSA project.
+
+- 00_intro.qmd: the data dictionary for tsa datasets
+
+- 01_table1.qmd: data cleaning and table1s for each dataset
+
+- 02_analysis_plan.qmd: meeting with JG on 1101 and notes

@@ -1,0 +1,31 @@
+project:
+  type: book
+
+book:
+  title: "PCORI Joint Model"
+  date: "10/30/2023"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - 01_table1.qmd
+    # - 03_propensity.qmd
+    # - 04_logistic.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format: 
+  html: 
+    code-fold: true
+    code-tools: true
+    code-link: true
+    df-print: paged
+    author-meta: "Randy Jin, Elizabeth Juarez-Colunga"
+    # include-in-header: "plausible.html"
+    callout-appearance: simple
+    extra_dependencies: ['amsmath', 'someotherpackage']
+
+editor: visual
+
+toc: true

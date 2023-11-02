@@ -1,0 +1,223 @@
+---
+title: "Caregiver Table1"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE,
+                      comment = "",
+                      #results = "hide",
+                      digits = 4,
+                      error = FALSE)
+
+## clean the R environment
+graphics.off()
+rm(list = ls())
+freshr::freshr()
+
+## load packages
+library(here, quietly = TRUE)
+library(tidyverse, quietly = TRUE)
+library(gtsummary, quietly = TRUE)
+library(flextable, quietly = TRUE)
+library(stddiff, quietly = TRUE)
+
+## check the directory for the file
+# here::dr_here()
+here::set_here()
+
+## the figure or results should be saved 
+# paste0("foldername/Sfilename_workingresult_", 
+#.       Sys.Date(), ".filetype")
+
+```
+
+
+<!-- ```{css, echo=FALSE} -->
+<!-- pre { -->
+<!--   max-height: 100px; -->
+<!--   max-width: 100px; -->
+<!--   overflow-y: auto; -->
+<!-- } -->
+
+<!-- pre[class] { -->
+<!--   max-height: 100px; -->
+<!--   max-width: 100; -->
+<!-- } -->
+<!-- ``` -->
+
+run the `source("01_table1.R")` to update the caregiver table1 dataset 
+
+```{r standard_diff}
+load("new_data/demo_clean_caregiver_factor_2_2023-11-01.Rdata")
+load("new_data/demo_clean_caregiver_merge_2_2023-11-01.Rdata")
+
+cg3 <- caregiver_table_2 %>% 
+  stddiff::stddiff.numeric(gcol = 17, 
+                           ## 3 age
+                           vcol = 3) %>%
+  as.data.frame() %>%
+  select(stddiff)
+
+cgn <- caregiver_table_2 %>% 
+  stddiff::stddiff.category(gcol = 17, 
+                           vcol = c(4:16, 18:21)) %>%
+  as.data.frame() %>%
+  select(stddiff)
+
+std_cg <- rbind(cg3, cgn)
+```
+
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 300px;
+  max-width: 900px;
+  overflow-y: auto;
+  overflow-x: auto !important;
+  background-color: inherit;
+}
+```
+
+```{r, class.output="scroll-100"}
+caregiver_table_2
+caregiver_table_3
+```
+
+
+```{r table1_caregiver}
+#| label: table1_caregiver
+#| tbl-cap: "Caregiver Table1"
+
+table1_caregiver <- caregiver_table_3 %>% 
+  dplyr::select(-cid, -pid) %>%
+  tbl_summary(by = randomize,
+              type = all_continuous() ~ "continuous",
+              statistic = list(all_continuous() ~ "{mean} / {median} ({p25}, {p75})")) %>%
+  add_p() %>%
+  # add overall column
+  modify_header(label = "**Variable**",
+                p.value = "**Std Diff**") 
+
+
+std_cg <- unlist(std_cg) %>% na.omit()
+table1_caregiver$table_body$p.value[!is.na(table1_caregiver$table_body$p.value)] <- std_cg
+# cbind(table1_caregiver$table_body$variable, table1_caregiver$table_body$p.value)
+
+footnote_cg <- 
+  c(a = 'Age binary',
+      # 'Caregiver: the primary caregiver to the reference group non-primary',
+    b = 'gender',
+      # 'Primary Reason: the primary caregiving reason of disease related to the reference group of not related',
+    c = 'Language',
+      # 'Employed: the caregiver is employed to the reference group of unemployed', 
+    d = 'Ethnicity',
+      # 'Retired: the caregiver is retired to the reference group of non-retired',
+    e = 'Race',
+      # 'Education: the caregiver received college or higher education to the reference group of high school or lower education', 
+    f = 'Primary Caregiver',
+      # 'Language: the caregiver perfer English as first language to reference group of Spanish',
+    g = 'Gender: the caregiver is female to reference group of male')
+
+table1_caregiver %>%
+  bold_labels() %>%
+  italicize_labels() %>%
+  gtsummary::as_flex_table() %>%
+  flextable::footnote(i =           c(2,      5,     8,   11,  14,    17,  31), #   22,  26,   31,   35,  
+                      ref_symbols = c(" a", " b", " c", " d", " e", " f", " g"),# " g", " h", " i", " j", " k", 
+                      j = 1,
+                      value = as_paragraph(footnote_cg),
+                      part = "body") %>%
+  flextable::theme_booktabs() %>%
+  flextable::autofit() %>%
+  flextable::bold(bold = TRUE,
+                  part = "header") 
+```
+
+
+```{r print_table}
+## save the latex .text file
+library(xtable)
+# xtable(table0, type = "latex", 
+#        file = paste0("figure/S01_plmlmm_table0_", Sys.Date(), ".tex"))
+# print(xtable(table0, type = "latex"),
+#       file = paste0("figure/S01_plmlmm_table0_", Sys.Date(), ".tex"))
+# xtable(table1, type = "latex", 
+#        file = paste0("figure/S01_plmlmm_table1_", Sys.Date(), ".tex"))
+print(xtable(as.data.frame(table1_caregiver), type = "latex"),
+      file = paste0("figure/T01_table1_caregiver_pvalue_", Sys.Date(), ".tex"))
+```
+
+
+
+```{=latex}
+\begin{tabular}{lcccc}
+  \hline
+ Characteristics & Intervention & Usual care & Std Diff \\ 
+  &  N = 131 & N = 118 & \\ 
+  \hline
+   Age & 57 / 58 (47, 68) & 55 / 60 (42, 68) & 0.13 \\ 
+  % & Age\_Binary &  &  & 0.055 \\ 
+   Age over 60 & 63 (48\%) & 60 (51\%) & 0.055 \\ 
+  % & Young than 60 & 68 (52\%) & 58 (49\%) &  \\ 
+  % & gender &  &  & 0.057 \\ 
+   Female & 99 (76\%) & 92 (78\%) &  0.057 \\ 
+  % & Male & 32 (24\%) & 26 (22\%) &  \\ 
+  % & language &  &  & 0.2 \\ 
+  % & English or Both & 112 (85\%) & 109 (92\%) &  \\ 
+   Spanish & 19 (15\%) & 9 (7.6\%) & 0.2 \\ 
+  % & ethnicity &  &  & 0.10 \\ 
+   Hispanic & 37 (28\%) & 28 (24\%) & 0.10 \\ 
+  % & Non-Hispanic & 94 (72\%) & 90 (76\%) &  \\ 
+  % & race\_white &  &  & 0.059 \\ 
+  % & Other & 24 (18\%) & 19 (16\%) &  \\ 
+   White & 107 (82\%) & 99 (84\%) & 0.059 \\ 
+   Primary Caregiver & 105 (80\%) & 93 (79\%) & 0.033 \\ 
+   Primary Reason &  &  & 0.3 \\ 
+   \ \ \ \ Yes & 64 (49\%) & 41 (35\%) &  \\ 
+   \ \ \ \ No & 65 (50\%) & 74 (63\%) &  \\ 
+   \ \ \ \ Missing & 2 (1.5\%) & 3 (2.5\%) &  \\ 
+   Hours &  &  & 0.2 \\ 
+   \ \ \ \ Less than 10 hours & 37 (28\%) & 42 (36\%) &  \\ 
+   \ \ \ \ More than 10 hours & 78 (60\%) & 66 (56\%) &  \\ 
+   \ \ \ \ Missing & 16 (12\%) & 10 (8.5\%) &  \\ 
+   Household &  &  & 0.2 \\ 
+   \ \ \ \ One & 34 (26\%) & 27 (23\%) &  \\ 
+   \ \ \ \ Two & 67 (51\%) & 56 (47\%) &  \\
+   \ \ \ \ More than two & 25 (19\%) & 32 (27\%) &  \\ 
+   \ \ \ \ Missing & 5 (3.8\%) & 3 (2.5\%) &  \\
+   Relationship &  &  & 0.045 \\ 
+   \ \ \ \ Couples or Partners & 66 (50\%) & 62 (53\%) &  \\ 
+   \ \ \ \ Parents or Children & 47 (36\%) & 40 (34\%) &  \\ 
+   \ \ \ \ Other relationships & 18 (14\%) & 16 (14\%) &  \\ 
+   Employed & 52 (40\%) & 54 (46\%) & 0.12 \\ 
+   Education &  &  & 0.3 \\ 
+   \ \ \ \ High school or lower & 59 (45\%) & 38 (32\%) &  \\ 
+   \ \ \ \ College or graduate school & 72 (55\%) & 79 (67\%) &  \\ 
+   \ \ \ \ Missing & 0 (0\%) & 1 (0.8\%) &  \\ 
+   Income &  &  & 0.2 \\ 
+   \ \ \ \ Less than 4000 & 84 (64\%) & 84 (71\%) &  \\
+   \ \ \ \ More than 4000 & 37 (28\%) & 29 (25\%) &  \\ 
+   \ \ \ \ Missing & 10 (7.6\%) & 5 (4.2\%) &  \\ 
+   Diagnosis &  &  & 0.14 \\ 
+   \ \ \ \ Head \& Neck cancer & 53 (40\%) & 40 (34\%) &  \\ 
+   \ \ \ \ Lung cancer & 78 (60\%) & 78 (66\%) &  \\ 
+   Stage &  &  & 0.087 \\ 
+   \ \ \ \ Early & 51 (39\%) & 43 (36\%) &  \\ 
+   \ \ \ \ Late & 74 (56\%) & 71 (60\%) &  \\ 
+   \ \ \ \ Missing & 6 (4.6\%) & 4 (3.4\%) &  \\ 
+  % & Step &  &  & 0.13 \\ 
+  % & Early & 106 (81\%) & 89 (75\%) &  \\ 
+   Step Late & 25 (19\%) & 29 (25\%) & 0.13 \\ 
+   Hospital &  &  & 0.2 \\ 
+   \ \ \ \ Denver Health & 30 (23\%) & 26 (22\%) &  \\ 
+   \ \ \ \ National Jewish & 19 (15\%) & 22 (19\%) &  \\ 
+   \ \ \ \ St.Joes & 15 (11\%) & 10 (8.5\%) &  \\ 
+   \ \ \ \ St.Marys & 60 (46\%) & 57 (48\%) &  \\ 
+   \ \ \ \ UCCC & 7 (5.3\%) & 3 (2.5\%) &  \\ 
+   \hline
+\end{tabular}
+```
+
+

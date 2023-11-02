@@ -1,0 +1,258 @@
+---
+title: "04_logistic"
+author: "randy"
+date: "2023-09-20"
+format:
+  html: 
+    code-fold: true
+    code-tools: true
+    code-link: true
+    code-overflow: wrap
+    code-summary: "Show the code"
+    author-meta: "Randy Jin, Elizabeth Juarez-Colunga"
+    callout-appearance: simple
+editor: visual
+toc: true
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE,
+                      comment = "#>",
+                      #results = "hide",
+                      digits = 4,
+                      error = FALSE)
+
+## clean the R environment
+graphics.off()
+rm(list = ls())
+freshr::freshr()
+
+## load packages
+library(here, quietly = TRUE)
+library(tidyverse, quietly = TRUE)
+library(gtsummary, quietly = TRUE)
+library(flextable, quietly = TRUE)
+library(broom.mixed)
+
+## check the directory for the file
+# here::dr_here()
+here::set_here()
+
+## the figure or results should be saved 
+# paste0("foldername/Sfilename_workingresult_", 
+#      Sys.Date(), ".filetype")
+
+```
+
+## Logistic regression with the `glm()`
+
+```{r}
+caregiver_all <- read_csv("new_data/data_table1_caregiver_all_paper_2023-09-20.csv")
+caregiver <- read.csv("new_data/data_table1_caregiver_numeric_std_2023-09-19.csv", row.names = 1) %>%
+  mutate(Hospital = factor(Hospital),
+         Income = factor(Income),
+         Education = factor(Education),
+         Household = factor(Household),
+         Relationship = factor(Relationship),
+         Caring.Hours = factor(Caring.Hours)) 
+```
+
+```{r}
+names(caregiver)
+## the missing pattern
+# nlmeU:::missPat(caregiver)
+nlmeU:::missPat(caregiver) %>% table()
+# table(caregiver$Randomize)
+#   0   1 
+# 118 131 
+# The complete vs the missing individuals
+# 154 vs. 249
+# nrow(caregiver)
+```
+
+
+```{r}
+set.seed(555)
+
+ps_mod1 <- glm(Randomize ~ 0 + Caregiver + Primary.Reason + Employed + Retired +
+                      Education + Language + Gender + Ethnicity + Race + Diagnosis +
+                      Stage + Step + Income + Household + Age + 
+                      Relationship + Caring.Hours + Hospital,
+                    data = caregiver,
+                    na.action = na.omit,
+                    family = binomial("logit"))
+summary(ps_mod1)
+
+tidy(ps_mod1)
+```
+
+
+
+```{r}
+## this is causing problem with the missingness in the dataset
+# caregiver4 <- 
+#   caregiver %>%
+#   mutate(ps = predict(ps_caregiver, type = "response")) %>%
+#   mutate(weights = ifelse(Randomize == 1, 1 / ps, 1 / (1 - ps)))
+```
+
+
+## Start to use INLA
+
+```{r}
+library(brinla, quietly = TRUE)
+library(INLA, quietly = TRUE)
+
+inla1 <- Randomize ~ 0 + Caregiver + Primary.Reason + Employed + Retired +
+                      Education + Language + Gender + Ethnicity + Race + Diagnosis +
+                      Stage + Step + Income + Household + Age + 
+                      Relationship + Caring.Hours + Hospital
+
+# ps_inla1 <- inla(inla1, family = "binomial", 
+#                data = caregiver,
+#                Ntrials = 1,
+#                keep = TRUE)
+
+ps_inla1 <- inla(inla1, family = "binomial", 
+               data = caregiver,
+               Ntrials = 1,
+               keep = TRUE,
+               ## saving the inla file
+               # working.directory = "ini/ini_file_inla_p",
+               ## this is imputing the missing values in inla
+               control.predictor = list(compute = TRUE),
+               control.compute = list(return.marginals.predictor = TRUE,
+                                      cpo = TRUE,
+                                      dic = TRUE,
+                                      waic = TRUE,
+                                      config = TRUE))
+
+round(ps_inla1$summary.fixed, 4)
+```
+
+
+```{r}
+caregiver2 <- caregiver %>%
+  mutate(ps = ps_inla1$summary.fitted.values$mode) %>%
+  mutate(weights = ifelse(Randomize == 1, 1 / ps, 1 / (1 - ps)))
+
+caregiver_score <- read.csv("new_data/score_caregiver_survey_scored.csv")
+caregiver3 <- caregiver_score %>%
+  dplyr::select(-record_id, -spanish, -randomize, -language,
+                -stage, -stage2, -diagnosis, -diagn.lc, 
+                -gender_clean, -hospital, -status2) %>%
+  full_join(caregiver2, by = join_by(uniqueid2 == ID)) %>%
+  dplyr::select(ID = uniqueid2, Randomize, everything())
+```
+
+
+
+```{r}
+#| eval: false
+#| include: false
+names(caregiver3)
+nlmeU:::missPat(caregiver3) %>% table()
+```
+
+
+```{r}
+library(ggplot2)
+library(MetBrewer)
+# Use the delightful Isfahan1 palette from the MetBrewer package
+isfahan <- MetBrewer::met.brewer("Isfahan1")
+
+# # Custom ggplot theme to make pretty plots
+# # Get Archivo Narrow at https://fonts.google.com/specimen/Archivo+Narrow
+# theme_nice <- function() {
+#   theme_minimal(base_family = "Archivo Narrow") +
+#     theme(panel.grid.minor = element_blank(),
+#           plot.background = element_rect(fill = "white", color = NA),
+#           plot.title = element_text(face = "bold"),
+#           axis.title = element_text(face = "bold"),
+#           strip.text = element_text(face = "bold", size = rel(0.8), hjust = 0),
+#           strip.background = element_rect(fill = "grey80", color = NA),
+#           legend.title = element_text(face = "bold"))
+# }
+# 
+# # Use this theme on all plots
+# theme_set(
+#   theme_nice()
+# )
+# 
+# # Make all labels use Archivo by default
+# update_geom_defaults("label", 
+#                      list(family = "Archivo Narrow",
+#                           fontface = "bold"))
+
+plot4 <- ggplot() + 
+  geom_histogram(data = filter(caregiver3, Randomize == 1), 
+                 bins = 30, aes(x = ps), 
+                 fill = isfahan[2]) + 
+  geom_histogram(data = filter(caregiver3, Randomize == 0), 
+                 bins = 30, aes(x = ps, y = -..count..), 
+                 fill = isfahan[6]) +
+  geom_hline(yintercept = 0) +
+  annotate(geom = "label", x = 0.1, y = 20, label = "Treated", 
+           color = "black", hjust = 0) +
+  annotate(geom = "label", x = 0.1, y = -20, label = "Untreated", 
+           color = "black", hjust = 0) +
+  scale_y_continuous(label = abs) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(-150, 150)) +
+  labs(x = "Propensity", y = "Count")
+
+
+plot5 <- ggplot() + 
+  geom_histogram(data = filter(caregiver3, Randomize == 1), 
+                 bins = 30, aes(x = ps, weight = weights), 
+                 fill = colorspace::lighten(isfahan[2], 0.35)) + 
+  geom_histogram(data = filter(caregiver3, Randomize == 0), 
+                 bins = 30, aes(x = ps, weight = weights, y = -..count..),
+                 fill = colorspace::lighten(isfahan[6], 0.35)) +
+  geom_histogram(data = filter(caregiver3, Randomize == 1), 
+                 bins = 30, aes(x = ps), 
+                 fill = isfahan[2]) + 
+  geom_histogram(data = filter(caregiver3, Randomize == 0), 
+                 bins = 30, aes(x = ps, y = -..count..),
+                 fill = isfahan[6]) +
+  annotate(geom = "label", x = 0.8, y = 140, label = "Treated (actual)", 
+           fill = isfahan[2], color = "white", hjust = 1) +
+  annotate(geom = "label", x = 0.8, y = 120, label = "Treated (IPTW pseudo-population)", 
+           fill = colorspace::lighten(isfahan[2], 0.35), color = "white", hjust = 1) +
+  annotate(geom = "label", x = 0.8, y = -120, label = "Untreated (actual)", 
+           fill = isfahan[6], color = "white", hjust = 1) +
+  annotate(geom = "label", x = 0.8, y = -140, label = "Untreated (IPTW pseudo-population)", 
+           fill = colorspace::lighten(isfahan[6], 0.35), color = "white", hjust = 1) +
+  geom_hline(yintercept = 0, color = "white", size = 0.25) +
+  scale_y_continuous(label = abs) +
+  coord_cartesian(xlim = c(0, 1), ylim = c(-150, 150)) +
+  labs(x = "Propensity", y = "Count") 
+
+plot4 + theme_bw()
+plot5 + theme_bw()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

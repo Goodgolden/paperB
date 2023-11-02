@@ -1,0 +1,193 @@
+---
+title: "03_propensity"
+author: "randy"
+date: "`r Sys.Date()`"
+format:
+  html: 
+    code-fold: true
+    code-tools: true
+    code-link: true
+    code-overflow: wrap
+    code-summary: "Show the code"
+    author-meta: "Randy Jin, Elizabeth Juarez-Colunga"
+    callout-appearance: simple
+editor: visual
+toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE,
+                      comment = "#>",
+                      #results = "hide",
+                      digits = 4,
+                      error = FALSE)
+
+## clean the R environment
+graphics.off()
+rm(list = ls())
+freshr::freshr()
+
+## load packages
+library(here, quietly = TRUE)
+library(tidyverse, quietly = TRUE)
+library(gtsummary, quietly = TRUE)
+library(flextable, quietly = TRUE)
+
+library(twang)
+library(broom.mixed)
+library(tictoc)
+
+## check the directory for the file
+here::set_here()
+
+
+## the figure or results should be saved 
+# paste0("foldername/Sfilename_workingresult_", 
+#      Sys.Date(), ".filetype")
+
+```
+
+
+::: callout-important
+!!! missing is the problem with twang package
+:::
+
+This is to say that you should not be relying on the features of twang or WeightIt to automatically address missing data; rather, you should use multiple imputation, which is the overwhelmingly recommended approach. There is a new R package that I have worked on called MatchThem, which is a wrapper for WeightIt for multiply imputed datasets. It makes using WeightIt with multiply imputed data really easy.
+
+```{r}
+caregiver_all <- read_csv("new_data/data_table1_caregiver_all_paper_2023-09-20.csv")
+caregiver <- read.csv("new_data/data_table1_caregiver_numeric_std_2023-09-19.csv", row.names = 1) %>%
+  mutate(Hospital = factor(Hospital),
+         Income = factor(Income),
+         Education = factor(Education),
+         Household = factor(Household),
+         Relationship = factor(Relationship),
+         Caring.Hours = factor(Caring.Hours)) %>%
+   na.omit()  
+# 154 vs. 249
+# nrow(caregiver)
+set.seed(555)
+
+tic()
+ps_gbm <- ps(Randomize ~ Caregiver + Primary.Reason + Employed + Retired +
+               Education + Language + Gender + Ethnicity + Race + Diagnosis +
+               Stage + Step + Income + Household + Age + 
+               Relationship + Caring.Hours + Hospital,
+             data = caregiver,
+             ## the number of gbm iterations passed to gbm
+             n.trees = 5000,
+             ## the tree depth used in gradient boosting
+             interaction.depth = 2,
+             shrinkage = 0.01,
+             ## "ATE" (average treatment effect) 
+             ## "ATT" (average treatment effect on the treated)
+             estimand = "ATT", 
+             ## minimizes the average absolute standardized effect size
+             ## maximum KS statistic 
+             ## the Kolmogorov-Smirnov statistic 
+             ## es refers to standardized effect size. 
+             stop.method = c("es.mean", "ks.max"),
+             ## the minimum number of observations in the terminal nodes
+             ## of the trees used in the gradient boosting
+             n.minobsinnode = 10,
+             n.keep = 1,
+             ## A numeric variable that sets the grid size for 
+             ## an initial search of the region most likely to 
+             ## minimize the stop.method.
+             n.grid = 25,
+             ks.exact = NULL,
+             verbose = FALSE)
+toc()
+
+summary(ps_gbm)
+```
+
+
+- ks refers to the Kolmogorov-Smirnov statistic 
+- es refers to standardized effect size.
+
+```{r}
+plot(ps_gbm)
+plot(ps_gbm, plots = "boxplot")
+```
+
+```{r}
+caregiver_balance <- bal.table(ps_gbm)
+# caregiver_balance
+```
+
+```{r}
+# summary(ps_gbm$gbm.obj, plot = TRUE)
+summary(ps_gbm$gbm.obj,
+        ## choose the number of iterations to be the optimal number
+        ## for minimizing the largest of the KS statistics
+        n.trees = ps_gbm$desc$es.mean.ATT$n.trees,
+        plot = FALSE)
+```
+
+
+
+```{r}
+library(survey)
+## get.weights is from twang package
+caregiver$w <- get.weights(ps_gbm, 
+                         ## stop.method specifies which gbm weights to use
+                         stop.method = "es.mean")
+## svydesign is from survey package
+design.ps <- svydesign(ids = ~1, 
+                       weights = ~w, 
+                       data = caregiver)
+
+```
+
+
+```{r}
+## this is the working dataset for the paper analysis
+caregiver_score <- read.csv("new_data/caregiver_survey_scored.csv")
+data2 <- caregiver_score %>%
+  dplyr::select(-record_id, -spanish, -randomize, -language,
+                -stage, -stage2, -diagnosis, -diagn.lc, 
+                -gender_clean, -hospital, -status2) %>%
+  inner_join(caregiver, by = join_by(uniqueid2 == ID)) %>%
+  dplyr::select(ID = uniqueid2, Randomize, everything()) %>%
+  na.omit()
+```
+
+
+??? weight in `lme()` is the variance function 
+Hence, I should use `weights = ~ I(1/b)` in `lme()` to have the variance of $\epsilon_i = 1/b_i$
+
+In `lm()` what you pass weights seems is the exact opposite; weights is inversely proportional to the variance.
+
+
+```{r}
+library(nlme)
+mod0 <- lme(zbi ~ 0 + Stage + Step + Diagnosis + Age + Gender + Randomize * time,
+            random = list(~1 | Hospital,
+                          ~1 | ID), 
+            data = data2)
+summary(mod0)
+
+mod1 <- lme(zbi ~ 0 + w + Randomize * time, 
+            random = list(~1 | Hospital,
+                          ~1 | ID), 
+            data = data2)
+summary(mod1)
+
+mod2 <- lme(zbi ~ 0 + Randomize * time,
+            random = list(~1 | Hospital,
+                          ~1 | ID), 
+            weights = ~ I(1/w),
+            data = data2)
+
+summary(mod2)
+```
+
+```{r}
+tidy(mod0)
+tidy(mod1)
+tidy(mod2)
+```
+
