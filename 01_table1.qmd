@@ -33,25 +33,13 @@ here::set_here()
 
 ```
 
+## Table1 for caregiver {#sec-c1-table1}
 
-<!-- ```{css, echo=FALSE} -->
-<!-- pre { -->
-<!--   max-height: 100px; -->
-<!--   max-width: 100px; -->
-<!--   overflow-y: auto; -->
-<!-- } -->
-
-<!-- pre[class] { -->
-<!--   max-height: 100px; -->
-<!--   max-width: 100; -->
-<!-- } -->
-<!-- ``` -->
-
-run the `source("01_table1.R")` to update the caregiver table1 dataset 
+run the `source("01_table1.R")` to update the caregiver table1 dataset
 
 ```{r standard_diff}
-load("new_data/demo_clean_caregiver_factor_2_2023-11-01.Rdata")
-load("new_data/demo_clean_caregiver_merge_2_2023-11-01.Rdata")
+load("new_data/demo_clean_caregiver_factor_2_2023-11-02.Rdata")
+load("new_data/demo_clean_caregiver_merge_2_2023-11-02.Rdata")
 
 cg3 <- caregiver_table_2 %>% 
   stddiff::stddiff.numeric(gcol = 17, 
@@ -69,7 +57,6 @@ cgn <- caregiver_table_2 %>%
 std_cg <- rbind(cg3, cgn)
 ```
 
-
 ```{css, echo=FALSE}
 .scroll-100 {
   max-height: 300px;
@@ -84,7 +71,6 @@ std_cg <- rbind(cg3, cgn)
 caregiver_table_2
 caregiver_table_3
 ```
-
 
 ```{r table1_caregiver}
 #| label: table1_caregiver
@@ -135,7 +121,6 @@ table1_caregiver %>%
                   part = "header") 
 ```
 
-
 ```{r print_table}
 ## save the latex .text file
 library(xtable)
@@ -148,8 +133,6 @@ library(xtable)
 print(xtable(as.data.frame(table1_caregiver), type = "latex"),
       file = paste0("figure/T01_table1_caregiver_pvalue_", Sys.Date(), ".tex"))
 ```
-
-
 
 ```{=latex}
 \begin{tabular}{lcccc}
@@ -219,5 +202,3 @@ print(xtable(as.data.frame(table1_caregiver), type = "latex"),
    \hline
 \end{tabular}
 ```
-
-

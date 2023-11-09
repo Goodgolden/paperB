@@ -1,20 +1,6 @@
 ---
-title: "04_logistic"
-author: "randy"
-date: "2023-09-20"
-format:
-  html: 
-    code-fold: true
-    code-tools: true
-    code-link: true
-    code-overflow: wrap
-    code-summary: "Show the code"
-    author-meta: "Randy Jin, Elizabeth Juarez-Colunga"
-    callout-appearance: simple
-editor: visual
-toc: true
+title: "03_logistic"
 ---
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,
@@ -36,6 +22,11 @@ library(tidyverse, quietly = TRUE)
 library(gtsummary, quietly = TRUE)
 library(flextable, quietly = TRUE)
 library(broom.mixed)
+library(MetBrewer)
+
+
+library(brinla, quietly = TRUE)
+library(INLA, quietly = TRUE)
 
 ## check the directory for the file
 # here::dr_here()
@@ -47,69 +38,63 @@ here::set_here()
 
 ```
 
-## Logistic regression with the `glm()`
+## Logistic regression with the `glm()` {#sec-c4-logistic}
 
 ```{r}
-caregiver_all <- read_csv("new_data/data_table1_caregiver_all_paper_2023-09-20.csv")
-caregiver <- read.csv("new_data/data_table1_caregiver_numeric_std_2023-09-19.csv", row.names = 1) %>%
-  mutate(Hospital = factor(Hospital),
-         Income = factor(Income),
-         Education = factor(Education),
-         Household = factor(Household),
-         Relationship = factor(Relationship),
-         Caring.Hours = factor(Caring.Hours)) 
+load("new_data/demo_clean_caregiver_merge_2_2023-11-02.Rdata") 
 ```
 
-```{r}
-names(caregiver)
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 300px;
+  max-width: 900px;
+  overflow-y: auto;
+  overflow-x: auto !important;
+  background-color: inherit;
+}
+```
+
+The dataset we used for caregiver table1 @sec-c1-table1 
+
+```{r "dataset", class.output="scroll-100"}
+caregiver_table_2
+```
+
+The only missing we have would be the caregivers without any patient.
+
+```{r "missing"}
+names(caregiver_table_2)
 ## the missing pattern
-# nlmeU:::missPat(caregiver)
-nlmeU:::missPat(caregiver) %>% table()
-# table(caregiver$Randomize)
-#   0   1 
-# 118 131 
-# The complete vs the missing individuals
-# 154 vs. 249
-# nrow(caregiver)
+nlmeU:::missPat(caregiver_table_2) %>% table()
 ```
 
-
-```{r}
+```{r "logistic"}
 set.seed(555)
 
-ps_mod1 <- glm(Randomize ~ 0 + Caregiver + Primary.Reason + Employed + Retired +
-                      Education + Language + Gender + Ethnicity + Race + Diagnosis +
-                      Stage + Step + Income + Household + Age + 
-                      Relationship + Caring.Hours + Hospital,
-                    data = caregiver,
-                    na.action = na.omit,
+ps_mod1 <- glm(randomize ~ 0 + primary_caregiver + primary_reason + employed + 
+                      education + language + gender + ethnicity + race + diagnosis +
+                      stage + step + income + household + age + 
+                      relationship + hours + hospital,
+                    data = caregiver_table_2,
                     family = binomial("logit"))
+```
+
+
+```{r "results_logisitic", class.output="scroll-100"}
 summary(ps_mod1)
 
 tidy(ps_mod1)
 ```
 
+## INLA logistic {#sec-c3-inla-logstic}
+
+```{r "inla_logistic"}
 
 
-```{r}
-## this is causing problem with the missingness in the dataset
-# caregiver4 <- 
-#   caregiver %>%
-#   mutate(ps = predict(ps_caregiver, type = "response")) %>%
-#   mutate(weights = ifelse(Randomize == 1, 1 / ps, 1 / (1 - ps)))
-```
-
-
-## Start to use INLA
-
-```{r}
-library(brinla, quietly = TRUE)
-library(INLA, quietly = TRUE)
-
-inla1 <- Randomize ~ 0 + Caregiver + Primary.Reason + Employed + Retired +
-                      Education + Language + Gender + Ethnicity + Race + Diagnosis +
-                      Stage + Step + Income + Household + Age + 
-                      Relationship + Caring.Hours + Hospital
+inla1 <-randomize ~ 0 + primary_caregiver + primary_reason + employed + 
+                      education + language + gender + ethnicity + race + diagnosis +
+                      stage + step + income + household + age + 
+                      relationship + hours + hospital
 
 # ps_inla1 <- inla(inla1, family = "binomial", 
 #                data = caregiver,
@@ -117,7 +102,7 @@ inla1 <- Randomize ~ 0 + Caregiver + Primary.Reason + Employed + Retired +
 #                keep = TRUE)
 
 ps_inla1 <- inla(inla1, family = "binomial", 
-               data = caregiver,
+               data = caregiver_table_2,
                Ntrials = 1,
                keep = TRUE,
                ## saving the inla file
@@ -129,38 +114,46 @@ ps_inla1 <- inla(inla1, family = "binomial",
                                       dic = TRUE,
                                       waic = TRUE,
                                       config = TRUE))
+```
 
+Here is the logistic results $\beta$
+
+```{r "inla_results", class.output="scroll-100"}
 round(ps_inla1$summary.fixed, 4)
 ```
 
-
-```{r}
-caregiver2 <- caregiver %>%
+```{r class.output="scroll-100"}
+## add the weights into the dataset
+caregiver_table_2 %<>%
   mutate(ps = ps_inla1$summary.fitted.values$mode) %>%
-  mutate(weights = ifelse(Randomize == 1, 1 / ps, 1 / (1 - ps)))
+  mutate(weights = ifelse(randomize == 1, 1 / ps, 1 / (1 - ps)))
 
 caregiver_score <- read.csv("new_data/score_caregiver_survey_scored.csv")
-caregiver3 <- caregiver_score %>%
+
+caregiver_longitudinal <- caregiver_score %>%
+  mutate(cid = as.character(uniqueid2)) %>%
   dplyr::select(-record_id, -spanish, -randomize, -language,
                 -stage, -stage2, -diagnosis, -diagn.lc, 
                 -gender_clean, -hospital, -status2) %>%
-  full_join(caregiver2, by = join_by(uniqueid2 == ID)) %>%
-  dplyr::select(ID = uniqueid2, Randomize, everything())
+  full_join(caregiver_table_2, by = join_by(cid == cid)) %>%
+  dplyr::select(cid, pid, randomize, everything())
+
+# save(caregiver_longitudinal, 
+#      file = paste0("new_data/longitudinal_demo_score_caregiver_", Sys.Date(), ".csv"))
+# save(caregiver_longitudinal, 
+#      file = paste0("new_data/longitudinal_demo_score_caregiver_", Sys.Date(), ".Rdata"))
 ```
 
-
-
-```{r}
-#| eval: false
-#| include: false
-names(caregiver3)
-nlmeU:::missPat(caregiver3) %>% table()
+```{r class.output="scroll-100"}
+#| label: missing_longitudinal
+#| eval: true
+#| include: true
+names(caregiver_longitudinal)
+nlmeU:::missPat(caregiver_longitudinal) %>% table()
 ```
 
+```{r propensity_score}
 
-```{r}
-library(ggplot2)
-library(MetBrewer)
 # Use the delightful Isfahan1 palette from the MetBrewer package
 isfahan <- MetBrewer::met.brewer("Isfahan1")
 
@@ -188,10 +181,10 @@ isfahan <- MetBrewer::met.brewer("Isfahan1")
 #                           fontface = "bold"))
 
 plot4 <- ggplot() + 
-  geom_histogram(data = filter(caregiver3, Randomize == 1), 
+  geom_histogram(data = filter(caregiver_longitudinal, randomize == 1), 
                  bins = 30, aes(x = ps), 
                  fill = isfahan[2]) + 
-  geom_histogram(data = filter(caregiver3, Randomize == 0), 
+  geom_histogram(data = filter(caregiver_longitudinal, randomize == 0), 
                  bins = 30, aes(x = ps, y = -..count..), 
                  fill = isfahan[6]) +
   geom_hline(yintercept = 0) +
@@ -205,16 +198,16 @@ plot4 <- ggplot() +
 
 
 plot5 <- ggplot() + 
-  geom_histogram(data = filter(caregiver3, Randomize == 1), 
+  geom_histogram(data = filter(caregiver_longitudinal, randomize == 1), 
                  bins = 30, aes(x = ps, weight = weights), 
                  fill = colorspace::lighten(isfahan[2], 0.35)) + 
-  geom_histogram(data = filter(caregiver3, Randomize == 0), 
+  geom_histogram(data = filter(caregiver_longitudinal, randomize == 0), 
                  bins = 30, aes(x = ps, weight = weights, y = -..count..),
                  fill = colorspace::lighten(isfahan[6], 0.35)) +
-  geom_histogram(data = filter(caregiver3, Randomize == 1), 
+  geom_histogram(data = filter(caregiver_longitudinal, randomize == 1), 
                  bins = 30, aes(x = ps), 
                  fill = isfahan[2]) + 
-  geom_histogram(data = filter(caregiver3, Randomize == 0), 
+  geom_histogram(data = filter(caregiver_longitudinal, randomize == 0), 
                  bins = 30, aes(x = ps, y = -..count..),
                  fill = isfahan[6]) +
   annotate(geom = "label", x = 0.8, y = 140, label = "Treated (actual)", 
@@ -229,30 +222,13 @@ plot5 <- ggplot() +
   scale_y_continuous(label = abs) +
   coord_cartesian(xlim = c(0, 1), ylim = c(-150, 150)) +
   labs(x = "Propensity", y = "Count") 
+```
+
+
+```{r}
+#| label: correction_ps
+#| fig-cap: Propensity Score Correction
 
 plot4 + theme_bw()
 plot5 + theme_bw()
 ```
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

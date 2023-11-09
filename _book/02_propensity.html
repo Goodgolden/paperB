@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.37">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="author" content="Randy Jin, Elizabeth Juarez-Colunga">
+<meta name="dcterms.date" content="2023-11-02">
+<title>PCORI Joint Model - 3&nbsp; Propensity Score</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<link href="./03_logistic.html" rel="next">
+<link href="./01_table1.html" rel="prev">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script><link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+</head>
+<body class="nav-sidebar floating">
+
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title">
+<span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Propensity Score</span>
+</h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="./">PCORI Joint Model</a> 
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Introduction</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./01_table1.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Caregiver Table1</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./02_propensity.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Propensity Score</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./03_logistic.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">03_logistic</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./summary.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Summary</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="./references.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reference</span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<div class="quarto-title-block"><div><h1 class="title d-none d-lg-block">
+<span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Propensity Score</span>
+</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>randy </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">November 2, 2023</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header><div class="callout-important callout callout-style-simple">
+<div class="callout-body d-flex">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-body-container">
+<p>!!! Missing is the problem with twang package <strong>fixed</strong> see <a href="01_table1.html#sec-c1-table1"><span>Section&nbsp;2.1</span></a></p>
+</div>
+</div>
+</div>
+<p>This is to say that you should not be relying on the features of twang or WeightIt to automatically address missing data; rather, you should use multiple imputation, which is the overwhelmingly recommended approach. There is a new R package that I have worked on called MatchThem, which is a wrapper for WeightIt for multiply imputed datasets. It makes using WeightIt with multiply imputed data really easy.</p>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/load.html">load</a></span><span class="op">(</span><span class="st">"new_data/demo_clean_caregiver_merge_2_2023-11-02.Rdata"</span><span class="op">)</span> </span>
+<span><span class="co"># caregiver_table_2 &lt;- caregiver_table_2 %&gt;%</span></span>
+<span><span class="co">#   mutate(randomize = as.numeric(randomize))</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">555</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">tic</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ps_gbm</span> <span class="op">&lt;-</span> <span class="fu">ps</span><span class="op">(</span><span class="va">randomize</span> <span class="op">~</span> <span class="va">primary_caregiver</span> <span class="op">+</span> <span class="va">primary_reason</span> <span class="op">+</span> <span class="va">employed</span> <span class="op">+</span></span>
+<span>               <span class="va">education</span> <span class="op">+</span> <span class="va">language</span> <span class="op">+</span> <span class="va">gender</span> <span class="op">+</span> <span class="va">ethnicity</span> <span class="op">+</span> <span class="va">race</span> <span class="op">+</span> </span>
+<span>               <span class="va">diagnosis</span> <span class="op">+</span> <span class="va">stage</span> <span class="op">+</span> <span class="va">step</span> <span class="op">+</span> <span class="va">income</span> <span class="op">+</span> <span class="va">household</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> </span>
+<span>               <span class="va">relationship</span> <span class="op">+</span> <span class="va">hours</span> <span class="op">+</span> <span class="va">hospital</span>,</span>
+<span>             data <span class="op">=</span> <span class="va">caregiver_table_2</span>,</span>
+<span>             <span class="co">## the number of gbm iterations passed to gbm</span></span>
+<span>             n.trees <span class="op">=</span> <span class="fl">5000</span>,</span>
+<span>             <span class="co">## the tree depth used in gradient boosting</span></span>
+<span>             interaction.depth <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>             shrinkage <span class="op">=</span> <span class="fl">0.01</span>,</span>
+<span>             <span class="co">## "ATE" (average treatment effect) </span></span>
+<span>             <span class="co">## "ATT" (average treatment effect on the treated)</span></span>
+<span>             estimand <span class="op">=</span> <span class="st">"ATT"</span>, </span>
+<span>             <span class="co">## minimizes the average absolute standardized effect size</span></span>
+<span>             <span class="co">## maximum KS statistic </span></span>
+<span>             <span class="co">## the Kolmogorov-Smirnov statistic </span></span>
+<span>             <span class="co">## es refers to standardized effect size. </span></span>
+<span>             stop.method <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"es.mean"</span>, <span class="st">"ks.max"</span><span class="op">)</span>,</span>
+<span>             <span class="co">## the minimum number of observations in the terminal nodes</span></span>
+<span>             <span class="co">## of the trees used in the gradient boosting</span></span>
+<span>             n.minobsinnode <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>             n.keep <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>             <span class="co">## A numeric variable that sets the grid size for </span></span>
+<span>             <span class="co">## an initial search of the region most likely to </span></span>
+<span>             <span class="co">## minimize the stop.method.</span></span>
+<span>             n.grid <span class="op">=</span> <span class="fl">25</span>,</span>
+<span>             ks.exact <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>             verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu">toc</span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre><code>1.534 sec elapsed</code></pre>
+</div>
+</div>
+<div class="cell">
+<style type="text/css">
+.scroll-100 {
+  max-height: 300px;
+  max-width: 900px;
+  overflow-y: auto;
+  overflow-x: auto !important;
+  background-color: inherit;
+}
+</style>
+</div>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ps_gbm</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre class="scroll-100"><code>            n.treat n.ctrl ess.treat  ess.ctrl    max.es    mean.es     max.ks
+unw             131    118       131 118.00000 0.2822580 0.11043944 0.14109199
+es.mean.ATT     131    118       131  84.13390 0.1768754 0.07053865 0.08899922
+ks.max.ATT      131    118       131  87.88799 0.1689008 0.08103827 0.08403354
+            max.ks.p    mean.ks iter
+unw               NA 0.04697920   NA
+es.mean.ATT       NA 0.02995796 1058
+ks.max.ATT        NA 0.03409130  534</code></pre>
+</div>
+</div>
+<ul>
+<li>ks refers to the Kolmogorov-Smirnov statistic</li>
+<li>es refers to standardized effect size.</li>
+</ul>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ps_gbm</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">ps_gbm</span>, plots <span class="op">=</span> <span class="st">"boxplot"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="02_propensity_files/figure-html/propensity%20score-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">caregiver balance measure</figcaption><p></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="02_propensity_files/figure-html/propensity%20score-2.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">att propensity score boxplot</figcaption><p></p>
+</figure>
+</div>
+</div>
+<p>Caregiver propensity score</p>
+</div>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">caregiver_balance</span> <span class="op">&lt;-</span> <span class="fu">bal.table</span><span class="op">(</span><span class="va">ps_gbm</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">caregiver_balance</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre class="scroll-100"><code>$unw
+                     tx.mn  tx.sd  ct.mn  ct.sd std.eff.sz  stat  pval    ks
+primary_caregiver:1  0.802  0.399  0.788  0.409      0.034 0.068 0.794 0.013
+primary_caregiver:2  0.198  0.399  0.212  0.409     -0.034    NA    NA 0.013
+primary_reason:0     0.015  0.123  0.025  0.157     -0.083 2.568 0.078 0.010
+primary_reason:1     0.489  0.500  0.347  0.476      0.282    NA    NA 0.141
+primary_reason:2     0.496  0.500  0.627  0.484     -0.262    NA    NA 0.131
+employed:1           0.397  0.489  0.458  0.498     -0.124 0.931 0.335 0.061
+employed:2           0.603  0.489  0.542  0.498      0.124    NA    NA 0.061
+education:0          0.000     NA  0.008  0.092         NA 2.598 0.075 0.008
+education:1          0.450  0.498  0.322  0.467      0.258    NA    NA 0.128
+education:2          0.550  0.498  0.669  0.470     -0.241    NA    NA 0.120
+language:1           0.145  0.352  0.076  0.265      0.195 2.930 0.088 0.069
+language:2           0.855  0.352  0.924  0.265     -0.195    NA    NA 0.069
+gender:1             0.244  0.430  0.220  0.414      0.056 0.198 0.657 0.024
+gender:2             0.756  0.430  0.780  0.414     -0.056    NA    NA 0.024
+ethnicity:1          0.718  0.450  0.763  0.425     -0.100 0.654 0.420 0.045
+ethnicity:2          0.282  0.450  0.237  0.425      0.100    NA    NA 0.045
+race:1               0.817  0.387  0.839  0.368     -0.057 0.213 0.645 0.022
+race:2               0.183  0.387  0.161  0.368      0.057    NA    NA 0.022
+diagnosis:1          0.595  0.491  0.661  0.473     -0.134 1.137 0.287 0.066
+diagnosis:2          0.405  0.491  0.339  0.473      0.134    NA    NA 0.066
+stage:0              0.046  0.209  0.034  0.181      0.057 0.232 0.793 0.012
+stage:1              0.389  0.488  0.364  0.481      0.051    NA    NA 0.025
+stage:2              0.565  0.496  0.602  0.490     -0.074    NA    NA 0.037
+step:1               0.809  0.393  0.754  0.431      0.140 1.098 0.296 0.055
+step:2               0.191  0.393  0.246  0.431     -0.140    NA    NA 0.055
+income:0             0.076  0.266  0.042  0.201      0.128 0.978 0.377 0.034
+income:1             0.641  0.480  0.712  0.453     -0.147    NA    NA 0.071
+income:2             0.282  0.450  0.246  0.431      0.081    NA    NA 0.037
+household:0          0.038  0.192  0.025  0.157      0.067 0.822 0.482 0.013
+household:1          0.260  0.438  0.229  0.420      0.070    NA    NA 0.031
+household:2          0.511  0.500  0.475  0.499      0.074    NA    NA 0.037
+household:3          0.191  0.393  0.271  0.445     -0.204    NA    NA 0.080
+age                 57.206 13.617 55.263 16.460      0.143 1.011 0.313 0.120
+relationship:1       0.504  0.500  0.525  0.499     -0.043 0.063 0.938 0.022
+relationship:2       0.359  0.480  0.339  0.473      0.041    NA    NA 0.020
+relationship:3       0.137  0.344  0.136  0.342      0.005    NA    NA 0.002
+hours:0              0.122  0.327  0.085  0.279      0.114 1.010 0.365 0.037
+hours:1              0.282  0.450  0.356  0.479     -0.163    NA    NA 0.073
+hours:2              0.595  0.491  0.559  0.496      0.074    NA    NA 0.036
+hospital:1           0.229  0.420  0.220  0.414      0.021 0.625 0.645 0.009
+hospital:2           0.115  0.318  0.085  0.279      0.093    NA    NA 0.030
+hospital:3           0.458  0.498  0.483  0.500     -0.050    NA    NA 0.025
+hospital:4           0.145  0.352  0.186  0.389     -0.118    NA    NA 0.041
+hospital:5           0.053  0.225  0.025  0.157      0.125    NA    NA 0.028
+                    ks.pval
+primary_caregiver:1   0.794
+primary_caregiver:2      NA
+primary_reason:0      0.078
+primary_reason:1         NA
+primary_reason:2         NA
+employed:1            0.335
+employed:2               NA
+education:0           0.075
+education:1              NA
+education:2              NA
+language:1            0.088
+language:2               NA
+gender:1              0.657
+gender:2                 NA
+ethnicity:1           0.420
+ethnicity:2              NA
+race:1                0.645
+race:2                   NA
+diagnosis:1           0.287
+diagnosis:2              NA
+stage:0               0.793
+stage:1                  NA
+stage:2                  NA
+step:1                0.296
+step:2                   NA
+income:0              0.377
+income:1                 NA
+income:2                 NA
+household:0           0.482
+household:1              NA
+household:2              NA
+household:3              NA
+age                   0.331
+relationship:1        0.938
+relationship:2           NA
+relationship:3           NA
+hours:0               0.365
+hours:1                  NA
+hours:2                  NA
+hospital:1            0.645
+hospital:2               NA
+hospital:3               NA
+hospital:4               NA
+hospital:5               NA
+
+$es.mean.ATT
+                     tx.mn  tx.sd  ct.mn  ct.sd std.eff.sz   stat  pval    ks
+primary_caregiver:1  0.802  0.399  0.814  0.389     -0.032  0.050 0.824 0.013
+primary_caregiver:2  0.198  0.399  0.186  0.389      0.032     NA    NA 0.013
+primary_reason:0     0.015  0.123  0.023  0.150     -0.062  0.136 0.871 0.008
+primary_reason:1     0.489  0.500  0.464  0.499      0.050     NA    NA 0.025
+primary_reason:2     0.496  0.500  0.513  0.500     -0.034     NA    NA 0.017
+employed:1           0.397  0.489  0.391  0.488      0.011  0.006 0.936 0.005
+employed:2           0.603  0.489  0.609  0.488     -0.011     NA    NA 0.005
+education:0          0.000     NA  0.007  0.082         NA  1.414 0.244 0.007
+education:1          0.450  0.498  0.362  0.481      0.177     NA    NA 0.088
+education:2          0.550  0.498  0.631  0.483     -0.163     NA    NA 0.081
+language:1           0.145  0.352  0.117  0.322      0.079  0.240 0.625 0.028
+language:2           0.855  0.352  0.883  0.322     -0.079     NA    NA 0.028
+gender:1             0.244  0.430  0.208  0.406      0.085  0.402 0.527 0.036
+gender:2             0.756  0.430  0.792  0.406     -0.085     NA    NA 0.036
+ethnicity:1          0.718  0.450  0.750  0.433     -0.072  0.249 0.618 0.032
+ethnicity:2          0.282  0.450  0.250  0.433      0.072     NA    NA 0.032
+race:1               0.817  0.387  0.866  0.341     -0.126  0.976 0.324 0.049
+race:2               0.183  0.387  0.134  0.341      0.126     NA    NA 0.049
+diagnosis:1          0.595  0.491  0.622  0.485     -0.054  0.144 0.704 0.026
+diagnosis:2          0.405  0.491  0.378  0.485      0.054     NA    NA 0.026
+stage:0              0.046  0.209  0.027  0.163      0.089  0.388 0.674 0.019
+stage:1              0.389  0.488  0.368  0.482      0.043     NA    NA 0.021
+stage:2              0.565  0.496  0.604  0.489     -0.080     NA    NA 0.039
+step:1               0.809  0.393  0.787  0.409      0.055  0.143 0.706 0.022
+step:2               0.191  0.393  0.213  0.409     -0.055     NA    NA 0.022
+income:0             0.076  0.266  0.071  0.257      0.019  0.249 0.777 0.005
+income:1             0.641  0.480  0.689  0.463     -0.099     NA    NA 0.048
+income:2             0.282  0.450  0.240  0.427      0.094     NA    NA 0.043
+household:0          0.038  0.192  0.024  0.152      0.076  0.444 0.720 0.014
+household:1          0.260  0.438  0.208  0.406      0.117     NA    NA 0.051
+household:2          0.511  0.500  0.557  0.497     -0.090     NA    NA 0.045
+household:3          0.191  0.393  0.212  0.408     -0.053     NA    NA 0.021
+age                 57.206 13.617 58.204 13.501     -0.073 -0.558 0.577 0.089
+relationship:1       0.504  0.500  0.549  0.498     -0.091  0.232 0.793 0.046
+relationship:2       0.359  0.480  0.318  0.466      0.086     NA    NA 0.041
+relationship:3       0.137  0.344  0.133  0.340      0.013     NA    NA 0.004
+hours:0              0.122  0.327  0.088  0.283      0.104  0.534 0.586 0.034
+hours:1              0.282  0.450  0.334  0.472     -0.115     NA    NA 0.052
+hours:2              0.595  0.491  0.578  0.494      0.036     NA    NA 0.018
+hospital:1           0.229  0.420  0.241  0.428     -0.029  0.199 0.937 0.012
+hospital:2           0.115  0.318  0.097  0.296      0.054     NA    NA 0.017
+hospital:3           0.458  0.498  0.483  0.500     -0.050     NA    NA 0.025
+hospital:4           0.145  0.352  0.148  0.355     -0.008     NA    NA 0.003
+hospital:5           0.053  0.225  0.031  0.173      0.100     NA    NA 0.022
+                    ks.pval
+primary_caregiver:1   0.824
+primary_caregiver:2      NA
+primary_reason:0      0.871
+primary_reason:1         NA
+primary_reason:2         NA
+employed:1            0.936
+employed:2               NA
+education:0           0.244
+education:1              NA
+education:2              NA
+language:1            0.625
+language:2               NA
+gender:1              0.527
+gender:2                 NA
+ethnicity:1           0.618
+ethnicity:2              NA
+race:1                0.324
+race:2                   NA
+diagnosis:1           0.704
+diagnosis:2              NA
+stage:0               0.674
+stage:1                  NA
+stage:2                  NA
+step:1                0.706
+step:2                   NA
+income:0              0.777
+income:1                 NA
+income:2                 NA
+household:0           0.720
+household:1              NA
+household:2              NA
+household:3              NA
+age                   0.812
+relationship:1        0.793
+relationship:2           NA
+relationship:3           NA
+hours:0               0.586
+hours:1                  NA
+hours:2                  NA
+hospital:1            0.937
+hospital:2               NA
+hospital:3               NA
+hospital:4               NA
+hospital:5               NA
+
+$ks.max.ATT
+                     tx.mn  tx.sd  ct.mn  ct.sd std.eff.sz   stat  pval    ks
+primary_caregiver:1  0.802  0.399  0.801  0.399      0.001  0.000 0.997 0.000
+primary_caregiver:2  0.198  0.399  0.199  0.399     -0.001     NA    NA 0.000
+primary_reason:0     0.015  0.123  0.027  0.162     -0.096  0.351 0.704 0.012
+primary_reason:1     0.489  0.500  0.444  0.497      0.090     NA    NA 0.045
+primary_reason:2     0.496  0.500  0.529  0.499     -0.067     NA    NA 0.033
+employed:1           0.397  0.489  0.402  0.490     -0.011  0.006 0.938 0.005
+employed:2           0.603  0.489  0.598  0.490      0.011     NA    NA 0.005
+education:0          0.000     NA  0.006  0.079         NA  1.287 0.276 0.006
+education:1          0.450  0.498  0.366  0.482      0.169     NA    NA 0.084
+education:2          0.550  0.498  0.627  0.484     -0.156     NA    NA 0.078
+language:1           0.145  0.352  0.115  0.319      0.086  0.267 0.606 0.030
+language:2           0.855  0.352  0.885  0.319     -0.086     NA    NA 0.030
+gender:1             0.244  0.430  0.192  0.394      0.121  0.899 0.344 0.052
+gender:2             0.756  0.430  0.808  0.394     -0.121     NA    NA 0.052
+ethnicity:1          0.718  0.450  0.746  0.435     -0.064  0.193 0.661 0.029
+ethnicity:2          0.282  0.450  0.254  0.435      0.064     NA    NA 0.029
+race:1               0.817  0.387  0.859  0.348     -0.108  0.740 0.391 0.042
+race:2               0.183  0.387  0.141  0.348      0.108     NA    NA 0.042
+diagnosis:1          0.595  0.491  0.645  0.479     -0.101  0.547 0.460 0.050
+diagnosis:2          0.405  0.491  0.355  0.479      0.101     NA    NA 0.050
+stage:0              0.046  0.209  0.026  0.160      0.094  0.430 0.646 0.020
+stage:1              0.389  0.488  0.370  0.483      0.039     NA    NA 0.019
+stage:2              0.565  0.496  0.604  0.489     -0.078     NA    NA 0.039
+step:1               0.809  0.393  0.763  0.425      0.117  0.600 0.439 0.046
+step:2               0.191  0.393  0.237  0.425     -0.117     NA    NA 0.046
+income:0             0.076  0.266  0.062  0.241      0.054  0.391 0.675 0.014
+income:1             0.641  0.480  0.700  0.458     -0.122     NA    NA 0.058
+income:2             0.282  0.450  0.238  0.426      0.098     NA    NA 0.044
+household:0          0.038  0.192  0.025  0.156      0.069  0.460 0.710 0.013
+household:1          0.260  0.438  0.206  0.404      0.123     NA    NA 0.054
+household:2          0.511  0.500  0.557  0.497     -0.092     NA    NA 0.046
+household:3          0.191  0.393  0.212  0.409     -0.054     NA    NA 0.021
+age                 57.206 13.617 58.123 13.613     -0.067 -0.520 0.604 0.083
+relationship:1       0.504  0.500  0.551  0.497     -0.095  0.264 0.767 0.047
+relationship:2       0.359  0.480  0.315  0.464      0.092     NA    NA 0.044
+relationship:3       0.137  0.344  0.134  0.341      0.009     NA    NA 0.003
+hours:0              0.122  0.327  0.088  0.283      0.104  0.817 0.442 0.034
+hours:1              0.282  0.450  0.356  0.479     -0.163     NA    NA 0.073
+hours:2              0.595  0.491  0.556  0.497      0.080     NA    NA 0.039
+hospital:1           0.229  0.420  0.240  0.427     -0.026  0.248 0.910 0.011
+hospital:2           0.115  0.318  0.099  0.298      0.050     NA    NA 0.016
+hospital:3           0.458  0.498  0.475  0.499     -0.034     NA    NA 0.017
+hospital:4           0.145  0.352  0.158  0.365     -0.037     NA    NA 0.013
+hospital:5           0.053  0.225  0.028  0.166      0.111     NA    NA 0.025
+                    ks.pval
+primary_caregiver:1   0.997
+primary_caregiver:2      NA
+primary_reason:0      0.704
+primary_reason:1         NA
+primary_reason:2         NA
+employed:1            0.938
+employed:2               NA
+education:0           0.276
+education:1              NA
+education:2              NA
+language:1            0.606
+language:2               NA
+gender:1              0.344
+gender:2                 NA
+ethnicity:1           0.661
+ethnicity:2              NA
+race:1                0.391
+race:2                   NA
+diagnosis:1           0.460
+diagnosis:2              NA
+stage:0               0.646
+stage:1                  NA
+stage:2                  NA
+step:1                0.439
+step:2                   NA
+income:0              0.675
+income:1                 NA
+income:2                 NA
+household:0           0.710
+household:1              NA
+household:2              NA
+household:3              NA
+age                   0.864
+relationship:1        0.767
+relationship:2           NA
+relationship:3           NA
+hours:0               0.442
+hours:1                  NA
+hours:2                  NA
+hospital:1            0.910
+hospital:2               NA
+hospital:3               NA
+hospital:4               NA
+hospital:5               NA</code></pre>
+</div>
+</div>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># summary(ps_gbm$gbm.obj, plot = TRUE)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">ps_gbm</span><span class="op">$</span><span class="va">gbm.obj</span>,</span>
+<span>        <span class="co">## choose the number of iterations to be the optimal number</span></span>
+<span>        <span class="co">## for minimizing the largest of the KS statistics</span></span>
+<span>        n.trees <span class="op">=</span> <span class="va">ps_gbm</span><span class="op">$</span><span class="va">desc</span><span class="op">$</span><span class="va">es.mean.ATT</span><span class="op">$</span><span class="va">n.trees</span>,</span>
+<span>        plot <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="02_propensity_files/figure-html/summary%20variable-1.png" class="img-fluid figure-img" width="960"></p>
+<p></p><figcaption class="figure-caption">relative influence</figcaption><p></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display">
+<div data-pagedtable="false">
+
+<script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":[""],"name":["_rn_"],"type":[""],"align":["left"]},{"label":["var"],"name":[1],"type":["chr"],"align":["left"]},{"label":["rel.inf"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"age","2":"37.35070981","_rn_":"age"},{"1":"household","2":"17.32897364","_rn_":"household"},{"1":"hospital","2":"14.62776331","_rn_":"hospital"},{"1":"primary_reason","2":"6.41411429","_rn_":"primary_reason"},{"1":"step","2":"5.18350990","_rn_":"step"},{"1":"language","2":"3.67378420","_rn_":"language"},{"1":"education","2":"3.34394855","_rn_":"education"},{"1":"income","2":"3.00717296","_rn_":"income"},{"1":"relationship","2":"1.85538674","_rn_":"relationship"},{"1":"employed","2":"1.75410739","_rn_":"employed"},{"1":"hours","2":"1.54782895","_rn_":"hours"},{"1":"stage","2":"1.43283373","_rn_":"stage"},{"1":"gender","2":"1.20972587","_rn_":"gender"},{"1":"ethnicity","2":"0.65822952","_rn_":"ethnicity"},{"1":"diagnosis","2":"0.56804942","_rn_":"diagnosis"},{"1":"race","2":"0.04386173","_rn_":"race"},{"1":"primary_caregiver","2":"0.00000000","_rn_":"primary_caregiver"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+<p>relative influence</p>
+</div>
+</div>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://r-survey.r-forge.r-project.org/survey/">survey</a></span><span class="op">)</span></span>
+<span><span class="co">## get.weights is from twang package</span></span>
+<span><span class="va">caregiver_table_2</span><span class="op">$</span><span class="va">w</span> <span class="op">&lt;-</span> <span class="fu">get.weights</span><span class="op">(</span><span class="va">ps_gbm</span>, </span>
+<span>                         <span class="co">## stop.method specifies which gbm weights to use</span></span>
+<span>                         stop.method <span class="op">=</span> <span class="st">"es.mean"</span><span class="op">)</span></span>
+<span><span class="co">## svydesign is from survey package</span></span>
+<span><span class="va">design.ps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/survey/man/svydesign.html">svydesign</a></span><span class="op">(</span>ids <span class="op">=</span> <span class="op">~</span><span class="fl">1</span>, </span>
+<span>                       weights <span class="op">=</span> <span class="op">~</span><span class="va">w</span>, </span>
+<span>                       data <span class="op">=</span> <span class="va">caregiver_table_2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">## this is the working dataset for the paper analysis</span></span>
+<span><span class="va">caregiver_score</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"new_data/score_caregiver_survey_scored.csv"</span><span class="op">)</span></span>
+<span><span class="va">data2</span> <span class="op">&lt;-</span> <span class="va">caregiver_score</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>cid <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html">as.character</a></span><span class="op">(</span><span class="va">uniqueid2</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">record_id</span>, <span class="op">-</span><span class="va">spanish</span>, <span class="op">-</span><span class="va">randomize</span>, <span class="op">-</span><span class="va">language</span>,</span>
+<span>                <span class="op">-</span><span class="va">stage</span>, <span class="op">-</span><span class="va">stage2</span>, <span class="op">-</span><span class="va">diagnosis</span>, <span class="op">-</span><span class="va">diagn.lc</span>, </span>
+<span>                <span class="op">-</span><span class="va">gender_clean</span>, <span class="op">-</span><span class="va">hospital</span>, <span class="op">-</span><span class="va">status2</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">inner_join</span><span class="op">(</span><span class="va">caregiver_table_2</span>, by <span class="op">=</span> <span class="fu">join_by</span><span class="op">(</span><span class="va">cid</span> <span class="op">==</span> <span class="va">cid</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cid</span>, <span class="va">pid</span>, <span class="va">randomize</span>, <span class="fu">everything</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<p>??? weight in <code><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme()</a></code> is the variance function Hence, I should use <code>weights = ~ I(1/b)</code> in <code><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme()</a></code> to have the variance of <span class="math inline">\(\epsilon_i = 1/b_i\)</span></p>
+<p>In <code><a href="https://rdrr.io/r/stats/lm.html">lm()</a></code> what you pass weights seems is the exact opposite; weights is inversely proportional to the variance.</p>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://svn.r-project.org/R-packages/trunk/nlme/">nlme</a></span><span class="op">)</span></span>
+<span><span class="va">mod0</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span><span class="op">(</span><span class="va">zbi</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">stage</span> <span class="op">+</span> <span class="va">step</span> <span class="op">+</span> <span class="va">diagnosis</span> <span class="op">+</span> <span class="va">age</span> <span class="op">+</span> <span class="va">gender</span> <span class="op">+</span> <span class="va">randomize</span> <span class="op">*</span> <span class="va">time</span>,</span>
+<span>            random <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">~</span><span class="fl">1</span> <span class="op">|</span> <span class="va">hospital</span>,</span>
+<span>                          <span class="op">~</span><span class="fl">1</span> <span class="op">|</span> <span class="va">cid</span><span class="op">)</span>, </span>
+<span>            data <span class="op">=</span> <span class="va">data2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mod0</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre class="scroll-100"><code>Linear mixed-effects model fit by REML
+  Data: data2 
+       AIC      BIC    logLik
+  4442.998 4501.632 -2208.499
+
+Random effects:
+ Formula: ~1 | hospital
+         (Intercept)
+StdDev: 0.0009824235
+
+ Formula: ~1 | cid %in% hospital
+        (Intercept) Residual
+StdDev:    5.495826 4.823554
+
+Fixed effects:  zbi ~ 0 + stage + step + diagnosis + age + gender + randomize *      time 
+                   Value Std.Error  DF   t-value p-value
+stage0          5.962835  4.173057 209  1.428889  0.1545
+stage1          6.697795  2.195179 209  3.051138  0.0026
+stage2          9.798125  2.101801 209  4.661775  0.0000
+step2           5.869533  1.079365 209  5.437951  0.0000
+diagnosis2      0.549354  0.880604 209  0.623837  0.5334
+age            -0.001503  0.029333 209 -0.051238  0.9592
+gender2         1.112904  1.038967 209  1.071164  0.2853
+randomize      -1.994610  0.939235 209 -2.123654  0.0349
+time            0.118943  0.029233 460  4.068761  0.0001
+randomize:time -0.052179  0.043214 460 -1.207465  0.2279
+ Correlation: 
+               stage0 stage1 stage2 step2  dgnss2 age    gendr2 randmz time  
+stage1          0.471                                                        
+stage2          0.480  0.915                                                 
+step2          -0.102 -0.211 -0.284                                          
+diagnosis2     -0.086 -0.204 -0.152  0.005                                   
+age            -0.480 -0.814 -0.842  0.203  0.050                            
+gender2        -0.124 -0.456 -0.423 -0.078 -0.020  0.086                     
+randomize      -0.116 -0.183 -0.197  0.070 -0.079 -0.040  0.000              
+time           -0.061 -0.118 -0.124  0.002  0.019 -0.026 -0.002  0.317       
+randomize:time  0.046  0.085  0.093  0.013 -0.013  0.003  0.006 -0.421 -0.676
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-3.84515190 -0.47807062 -0.08978088  0.46101892  4.43214224 
+
+Number of Observations: 682
+Number of Groups: 
+         hospital cid %in% hospital 
+                5               221 </code></pre>
+</div>
+<details><summary>Show the code</summary><div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mod1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span><span class="op">(</span><span class="va">zbi</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">w</span> <span class="op">+</span> <span class="va">randomize</span> <span class="op">*</span> <span class="va">time</span>, </span>
+<span>            random <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">~</span><span class="fl">1</span> <span class="op">|</span> <span class="va">hospital</span>,</span>
+<span>                          <span class="op">~</span><span class="fl">1</span> <span class="op">|</span> <span class="va">cid</span><span class="op">)</span>, </span>
+<span>            data <span class="op">=</span> <span class="va">data2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mod1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre class="scroll-100"><code>Linear mixed-effects model fit by REML
+  Data: data2 
+       AIC      BIC    logLik
+  4506.861 4538.495 -2246.431
+
+Random effects:
+ Formula: ~1 | hospital
+        (Intercept)
+StdDev:    10.11958
+
+ Formula: ~1 | cid %in% hospital
+        (Intercept) Residual
+StdDev:    6.211722  4.83313
+
+Fixed effects:  zbi ~ 0 + w + randomize * time 
+                    Value Std.Error  DF   t-value p-value
+w               0.7929278 1.2301340 215  0.644587  0.5199
+randomize      -2.2676853 1.0298003 215 -2.202063  0.0287
+time            0.1224763 0.0292666 460  4.184851  0.0000
+randomize:time -0.0591068 0.0434111 460 -1.361560  0.1740
+ Correlation: 
+               w      randmz time  
+randomize      -0.204              
+time           -0.013  0.284       
+randomize:time  0.008 -0.381 -0.674
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-3.67241081 -0.51089297 -0.07170641  0.44724560  4.31123786 
+
+Number of Observations: 682
+Number of Groups: 
+         hospital cid %in% hospital 
+                5               221 </code></pre>
+</div>
+<details><summary>Show the code</summary><div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mod2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/nlme/man/lme.html">lme</a></span><span class="op">(</span><span class="va">zbi</span> <span class="op">~</span> <span class="fl">0</span> <span class="op">+</span> <span class="va">randomize</span> <span class="op">*</span> <span class="va">time</span>,</span>
+<span>            random <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">~</span><span class="fl">1</span> <span class="op">|</span> <span class="va">hospital</span>,</span>
+<span>                          <span class="op">~</span><span class="fl">1</span> <span class="op">|</span> <span class="va">cid</span><span class="op">)</span>, </span>
+<span>            weights <span class="op">=</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/AsIs.html">I</a></span><span class="op">(</span><span class="fl">1</span><span class="op">/</span><span class="va">w</span><span class="op">)</span>,</span>
+<span>            data <span class="op">=</span> <span class="va">data2</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">mod2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stdout">
+<pre class="scroll-100"><code>Linear mixed-effects model fit by REML
+  Data: data2 
+       AIC      BIC    logLik
+  4561.917 4589.041 -2274.959
+
+Random effects:
+ Formula: ~1 | hospital
+        (Intercept)
+StdDev:    10.61629
+
+ Formula: ~1 | cid %in% hospital
+        (Intercept) Residual
+StdDev:    6.064869 4.635568
+
+Variance function:
+ Structure: fixed weights
+ Formula: ~I(1/w) 
+Fixed effects:  zbi ~ 0 + randomize * time 
+                    Value Std.Error  DF   t-value p-value
+randomize      -2.0002746 1.0076933 216 -1.985003  0.0484
+time            0.1247430 0.0303855 460  4.105347  0.0000
+randomize:time -0.0612263 0.0432489 460 -1.415673  0.1575
+ Correlation: 
+               randmz time  
+time            0.300       
+randomize:time -0.390 -0.702
+
+Standardized Within-Group Residuals:
+        Min          Q1         Med          Q3         Max 
+-4.41375348 -0.49606846 -0.06911306  0.40653634  4.48115293 
+
+Number of Observations: 682
+Number of Groups: 
+         hospital cid %in% hospital 
+                5               221 </code></pre>
+</div>
+</div>
+<div class="cell">
+<details><summary>Show the code</summary><div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">#|: warnings = false</span></span>
+<span><span class="fu">tidy</span><span class="op">(</span><span class="va">mod0</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stderr">
+<pre><code>Warning in tidy.lme(mod0): ran_pars not yet implemented for multiple levels of
+nesting</code></pre>
+</div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["effect"],"name":[1],"type":["chr"],"align":["left"]},{"label":["term"],"name":[2],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["std.error"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["df"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["statistic"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"fixed","2":"stage0","3":"5.962835168","4":"4.17305724","5":"209","6":"1.42888890","7":"1.545290e-01"},{"1":"fixed","2":"stage1","3":"6.697794606","4":"2.19517948","5":"209","6":"3.05113758","7":"2.575201e-03"},{"1":"fixed","2":"stage2","3":"9.798125028","4":"2.10180129","5":"209","6":"4.66177516","7":"5.583372e-06"},{"1":"fixed","2":"step2","3":"5.869532954","4":"1.07936487","5":"209","6":"5.43795072","7":"1.497624e-07"},{"1":"fixed","2":"diagnosis2","3":"0.549353741","4":"0.88060393","5":"209","6":"0.62383748","7":"5.334146e-01"},{"1":"fixed","2":"age","3":"-0.001502937","4":"0.02933267","5":"209","6":"-0.05123766","7":"9.591851e-01"},{"1":"fixed","2":"gender2","3":"1.112903789","4":"1.03896650","5":"209","6":"1.07116426","7":"2.853310e-01"},{"1":"fixed","2":"randomize","3":"-1.994610454","4":"0.93923497","5":"209","6":"-2.12365437","7":"3.487478e-02"},{"1":"fixed","2":"time","3":"0.118943486","4":"0.02923334","5":"460","6":"4.06876111","7":"5.561908e-05"},{"1":"fixed","2":"randomize:time","3":"-0.052179274","4":"0.04321391","5":"460","6":"-1.20746467","7":"2.278737e-01"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<details><summary>Show the code</summary><div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">mod1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stderr">
+<pre><code>Warning in tidy.lme(mod1): ran_pars not yet implemented for multiple levels of
+nesting</code></pre>
+</div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["effect"],"name":[1],"type":["chr"],"align":["left"]},{"label":["term"],"name":[2],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["std.error"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["df"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["statistic"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"fixed","2":"w","3":"0.79292778","4":"1.23013398","5":"215","6":"0.6445865","7":"5.198823e-01"},{"1":"fixed","2":"randomize","3":"-2.26768534","4":"1.02980032","5":"215","6":"-2.2020632","7":"2.872382e-02"},{"1":"fixed","2":"time","3":"0.12247630","4":"0.02926658","5":"460","6":"4.1848512","7":"3.419323e-05"},{"1":"fixed","2":"randomize:time","3":"-0.05910678","4":"0.04341106","5":"460","6":"-1.3615605","7":"1.740031e-01"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+<details><summary>Show the code</summary><div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">tidy</span><span class="op">(</span><span class="va">mod2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details><div class="cell-output cell-output-stderr">
+<pre><code>Warning in tidy.lme(mod2): ran_pars not yet implemented for multiple levels of
+nesting</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in tidy.varFunc(x$modelStruct$varStruct): Variance function structure
+of classvarFixedwith no parameters, or uninitialized</code></pre>
+</div>
+<div class="cell-output-display">
+
+<div data-pagedtable="false">
+  <script data-pagedtable-source="" type="application/json">
+{"columns":[{"label":["effect"],"name":[1],"type":["chr"],"align":["left"]},{"label":["term"],"name":[2],"type":["chr"],"align":["left"]},{"label":["estimate"],"name":[3],"type":["dbl"],"align":["right"]},{"label":["std.error"],"name":[4],"type":["dbl"],"align":["right"]},{"label":["df"],"name":[5],"type":["dbl"],"align":["right"]},{"label":["statistic"],"name":[6],"type":["dbl"],"align":["right"]},{"label":["p.value"],"name":[7],"type":["dbl"],"align":["right"]}],"data":[{"1":"fixed","2":"randomize","3":"-2.00027462","4":"1.00769327","5":"216","6":"-1.985003","7":"0.048409382"},{"1":"fixed","2":"time","3":"0.12474298","4":"0.03038549","5":"460","6":"4.105347","7":"0.000047772"},{"1":"fixed","2":"randomize:time","3":"-0.06122627","4":"0.04324889","5":"460","6":"-1.415673","7":"0.157548038"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
+  </script>
+</div>
+</div>
+</div>
+
+
+<!-- -->
+
+
+</main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  const viewSource = window.document.getElementById('quarto-view-source') ||
+                     window.document.getElementById('quarto-code-tools-source');
+  if (viewSource) {
+    const sourceUrl = viewSource.getAttribute("data-quarto-source-url");
+    viewSource.addEventListener("click", function(e) {
+      if (sourceUrl) {
+        // rstudio viewer pane
+        if (/\bcapabilities=\b/.test(window.location)) {
+          window.open(sourceUrl);
+        } else {
+          window.location.href = sourceUrl;
+        }
+      } else {
+        const modal = new bootstrap.Modal(document.getElementById('quarto-embedded-source-code-modal'));
+        modal.show();
+      }
+      return false;
+    });
+  }
+  function toggleCodeHandler(show) {
+    return function(e) {
+      const detailsSrc = window.document.querySelectorAll(".cell > details > .sourceCode");
+      for (let i=0; i<detailsSrc.length; i++) {
+        const details = detailsSrc[i].parentElement;
+        if (show) {
+          details.open = true;
+        } else {
+          details.removeAttribute("open");
+        }
+      }
+      const cellCodeDivs = window.document.querySelectorAll(".cell > .sourceCode");
+      const fromCls = show ? "hidden" : "unhidden";
+      const toCls = show ? "unhidden" : "hidden";
+      for (let i=0; i<cellCodeDivs.length; i++) {
+        const codeDiv = cellCodeDivs[i];
+        if (codeDiv.classList.contains(fromCls)) {
+          codeDiv.classList.remove(fromCls);
+          codeDiv.classList.add(toCls);
+        } 
+      }
+      return false;
+    }
+  }
+  const hideAllCode = window.document.getElementById("quarto-hide-all-code");
+  if (hideAllCode) {
+    hideAllCode.addEventListener("click", toggleCodeHandler(false));
+  }
+  const showAllCode = window.document.getElementById("quarto-show-all-code");
+  if (showAllCode) {
+    showAllCode.addEventListener("click", toggleCodeHandler(true));
+  }
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="./01_table1.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Caregiver Table1</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="./03_logistic.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">03_logistic</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
+<div class="sourceCode" id="cb24" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Propensity Score"</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> "randy"</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "`r Sys.Date()`"</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">  html: </span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a><span class="co">    code-link: true</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">    code-overflow: wrap</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">    code-summary: "Show the code"</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="co">    author-meta: "Randy Jin, Elizabeth Juarez-Colunga"</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a><span class="co">    callout-appearance: simple</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="an">editor:</span><span class="co"> visual</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="an">toc:</span><span class="co"> true</span></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="in">```{r setup, include=FALSE}</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span>opts_chunk<span class="sc">$</span><span class="fu">set</span>(<span class="at">echo =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>                      <span class="at">warnings =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>                      <span class="at">message =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>                      <span class="at">comment =</span> <span class="st">""</span>,</span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>                      <span class="co">#results = "hide",</span></span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>                      <span class="at">digits =</span> <span class="dv">4</span>,</span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>                      <span class="at">error =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-27"><a href="#cb24-27" aria-hidden="true" tabindex="-1"></a><span class="do">## clean the R environment</span></span>
+<span id="cb24-28"><a href="#cb24-28" aria-hidden="true" tabindex="-1"></a><span class="fu">graphics.off</span>()</span>
+<span id="cb24-29"><a href="#cb24-29" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(<span class="at">list =</span> <span class="fu">ls</span>())</span>
+<span id="cb24-30"><a href="#cb24-30" aria-hidden="true" tabindex="-1"></a>freshr<span class="sc">::</span><span class="fu">freshr</span>()</span>
+<span id="cb24-31"><a href="#cb24-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-32"><a href="#cb24-32" aria-hidden="true" tabindex="-1"></a><span class="do">## load packages</span></span>
+<span id="cb24-33"><a href="#cb24-33" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb24-34"><a href="#cb24-34" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse, <span class="at">quietly =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb24-35"><a href="#cb24-35" aria-hidden="true" tabindex="-1"></a><span class="co"># library(gtsummary, quietly = TRUE)</span></span>
+<span id="cb24-36"><a href="#cb24-36" aria-hidden="true" tabindex="-1"></a><span class="co"># library(flextable, quietly = TRUE)</span></span>
+<span id="cb24-37"><a href="#cb24-37" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(twang)</span>
+<span id="cb24-38"><a href="#cb24-38" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(broom.mixed)</span>
+<span id="cb24-39"><a href="#cb24-39" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tictoc)</span>
+<span id="cb24-40"><a href="#cb24-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-41"><a href="#cb24-41" aria-hidden="true" tabindex="-1"></a><span class="do">## check the directory for the file</span></span>
+<span id="cb24-42"><a href="#cb24-42" aria-hidden="true" tabindex="-1"></a>here<span class="sc">::</span><span class="fu">set_here</span>()</span>
+<span id="cb24-43"><a href="#cb24-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-44"><a href="#cb24-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-45"><a href="#cb24-45" aria-hidden="true" tabindex="-1"></a><span class="do">## the figure or results should be saved </span></span>
+<span id="cb24-46"><a href="#cb24-46" aria-hidden="true" tabindex="-1"></a><span class="co"># paste0("foldername/Sfilename_workingresult_", </span></span>
+<span id="cb24-47"><a href="#cb24-47" aria-hidden="true" tabindex="-1"></a><span class="co">#      Sys.Date(), ".filetype")</span></span>
+<span id="cb24-48"><a href="#cb24-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-49"><a href="#cb24-49" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-50"><a href="#cb24-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-51"><a href="#cb24-51" aria-hidden="true" tabindex="-1"></a>::: callout-important</span>
+<span id="cb24-52"><a href="#cb24-52" aria-hidden="true" tabindex="-1"></a>!!! Missing is the problem with twang package **fixed** see @sec-c1-table1</span>
+<span id="cb24-53"><a href="#cb24-53" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb24-54"><a href="#cb24-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-55"><a href="#cb24-55" aria-hidden="true" tabindex="-1"></a>This is to say that you should not be relying on the features of twang or WeightIt to automatically address missing data; rather, you should use multiple imputation, which is the overwhelmingly recommended approach. There is a new R package that I have worked on called MatchThem, which is a wrapper for WeightIt for multiply imputed datasets. It makes using WeightIt with multiply imputed data really easy.</span>
+<span id="cb24-56"><a href="#cb24-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-59"><a href="#cb24-59" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-60"><a href="#cb24-60" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"new_data/demo_clean_caregiver_merge_2_2023-11-02.Rdata"</span>) </span>
+<span id="cb24-61"><a href="#cb24-61" aria-hidden="true" tabindex="-1"></a><span class="co"># caregiver_table_2 &lt;- caregiver_table_2 %&gt;%</span></span>
+<span id="cb24-62"><a href="#cb24-62" aria-hidden="true" tabindex="-1"></a><span class="co">#   mutate(randomize = as.numeric(randomize))</span></span>
+<span id="cb24-63"><a href="#cb24-63" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">555</span>)</span>
+<span id="cb24-64"><a href="#cb24-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-65"><a href="#cb24-65" aria-hidden="true" tabindex="-1"></a><span class="fu">tic</span>()</span>
+<span id="cb24-66"><a href="#cb24-66" aria-hidden="true" tabindex="-1"></a>ps_gbm <span class="ot">&lt;-</span> <span class="fu">ps</span>(randomize <span class="sc">~</span> primary_caregiver <span class="sc">+</span> primary_reason <span class="sc">+</span> employed <span class="sc">+</span></span>
+<span id="cb24-67"><a href="#cb24-67" aria-hidden="true" tabindex="-1"></a>               education <span class="sc">+</span> language <span class="sc">+</span> gender <span class="sc">+</span> ethnicity <span class="sc">+</span> race <span class="sc">+</span> </span>
+<span id="cb24-68"><a href="#cb24-68" aria-hidden="true" tabindex="-1"></a>               diagnosis <span class="sc">+</span> stage <span class="sc">+</span> step <span class="sc">+</span> income <span class="sc">+</span> household <span class="sc">+</span> age <span class="sc">+</span> </span>
+<span id="cb24-69"><a href="#cb24-69" aria-hidden="true" tabindex="-1"></a>               relationship <span class="sc">+</span> hours <span class="sc">+</span> hospital,</span>
+<span id="cb24-70"><a href="#cb24-70" aria-hidden="true" tabindex="-1"></a>             <span class="at">data =</span> caregiver_table_2,</span>
+<span id="cb24-71"><a href="#cb24-71" aria-hidden="true" tabindex="-1"></a>             <span class="do">## the number of gbm iterations passed to gbm</span></span>
+<span id="cb24-72"><a href="#cb24-72" aria-hidden="true" tabindex="-1"></a>             <span class="at">n.trees =</span> <span class="dv">5000</span>,</span>
+<span id="cb24-73"><a href="#cb24-73" aria-hidden="true" tabindex="-1"></a>             <span class="do">## the tree depth used in gradient boosting</span></span>
+<span id="cb24-74"><a href="#cb24-74" aria-hidden="true" tabindex="-1"></a>             <span class="at">interaction.depth =</span> <span class="dv">2</span>,</span>
+<span id="cb24-75"><a href="#cb24-75" aria-hidden="true" tabindex="-1"></a>             <span class="at">shrinkage =</span> <span class="fl">0.01</span>,</span>
+<span id="cb24-76"><a href="#cb24-76" aria-hidden="true" tabindex="-1"></a>             <span class="do">## "ATE" (average treatment effect) </span></span>
+<span id="cb24-77"><a href="#cb24-77" aria-hidden="true" tabindex="-1"></a>             <span class="do">## "ATT" (average treatment effect on the treated)</span></span>
+<span id="cb24-78"><a href="#cb24-78" aria-hidden="true" tabindex="-1"></a>             <span class="at">estimand =</span> <span class="st">"ATT"</span>, </span>
+<span id="cb24-79"><a href="#cb24-79" aria-hidden="true" tabindex="-1"></a>             <span class="do">## minimizes the average absolute standardized effect size</span></span>
+<span id="cb24-80"><a href="#cb24-80" aria-hidden="true" tabindex="-1"></a>             <span class="do">## maximum KS statistic </span></span>
+<span id="cb24-81"><a href="#cb24-81" aria-hidden="true" tabindex="-1"></a>             <span class="do">## the Kolmogorov-Smirnov statistic </span></span>
+<span id="cb24-82"><a href="#cb24-82" aria-hidden="true" tabindex="-1"></a>             <span class="do">## es refers to standardized effect size. </span></span>
+<span id="cb24-83"><a href="#cb24-83" aria-hidden="true" tabindex="-1"></a>             <span class="at">stop.method =</span> <span class="fu">c</span>(<span class="st">"es.mean"</span>, <span class="st">"ks.max"</span>),</span>
+<span id="cb24-84"><a href="#cb24-84" aria-hidden="true" tabindex="-1"></a>             <span class="do">## the minimum number of observations in the terminal nodes</span></span>
+<span id="cb24-85"><a href="#cb24-85" aria-hidden="true" tabindex="-1"></a>             <span class="do">## of the trees used in the gradient boosting</span></span>
+<span id="cb24-86"><a href="#cb24-86" aria-hidden="true" tabindex="-1"></a>             <span class="at">n.minobsinnode =</span> <span class="dv">10</span>,</span>
+<span id="cb24-87"><a href="#cb24-87" aria-hidden="true" tabindex="-1"></a>             <span class="at">n.keep =</span> <span class="dv">1</span>,</span>
+<span id="cb24-88"><a href="#cb24-88" aria-hidden="true" tabindex="-1"></a>             <span class="do">## A numeric variable that sets the grid size for </span></span>
+<span id="cb24-89"><a href="#cb24-89" aria-hidden="true" tabindex="-1"></a>             <span class="do">## an initial search of the region most likely to </span></span>
+<span id="cb24-90"><a href="#cb24-90" aria-hidden="true" tabindex="-1"></a>             <span class="do">## minimize the stop.method.</span></span>
+<span id="cb24-91"><a href="#cb24-91" aria-hidden="true" tabindex="-1"></a>             <span class="at">n.grid =</span> <span class="dv">25</span>,</span>
+<span id="cb24-92"><a href="#cb24-92" aria-hidden="true" tabindex="-1"></a>             <span class="at">ks.exact =</span> <span class="cn">NULL</span>,</span>
+<span id="cb24-93"><a href="#cb24-93" aria-hidden="true" tabindex="-1"></a>             <span class="at">verbose =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb24-94"><a href="#cb24-94" aria-hidden="true" tabindex="-1"></a><span class="fu">toc</span>()</span>
+<span id="cb24-95"><a href="#cb24-95" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-96"><a href="#cb24-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-97"><a href="#cb24-97" aria-hidden="true" tabindex="-1"></a><span class="in">```{css, echo=FALSE}</span></span>
+<span id="cb24-98"><a href="#cb24-98" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">scroll</span><span class="dv">-100</span> <span class="op">{</span></span>
+<span id="cb24-99"><a href="#cb24-99" aria-hidden="true" tabindex="-1"></a>  max<span class="op">-</span>height<span class="op">:</span> 300px<span class="op">;</span></span>
+<span id="cb24-100"><a href="#cb24-100" aria-hidden="true" tabindex="-1"></a>  max<span class="op">-</span>width<span class="op">:</span> 900px<span class="op">;</span></span>
+<span id="cb24-101"><a href="#cb24-101" aria-hidden="true" tabindex="-1"></a>  overflow<span class="op">-</span>y<span class="op">:</span> auto<span class="op">;</span></span>
+<span id="cb24-102"><a href="#cb24-102" aria-hidden="true" tabindex="-1"></a>  overflow<span class="op">-</span>x<span class="op">:</span> auto <span class="op">!</span>important<span class="op">;</span></span>
+<span id="cb24-103"><a href="#cb24-103" aria-hidden="true" tabindex="-1"></a>  background<span class="op">-</span>color<span class="op">:</span> inherit<span class="op">;</span></span>
+<span id="cb24-104"><a href="#cb24-104" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb24-105"><a href="#cb24-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-106"><a href="#cb24-106" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-107"><a href="#cb24-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{r, class.output="scroll-100"}</span></span>
+<span id="cb24-108"><a href="#cb24-108" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ps_gbm)</span>
+<span id="cb24-109"><a href="#cb24-109" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-110"><a href="#cb24-110" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-111"><a href="#cb24-111" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>ks refers to the Kolmogorov-Smirnov statistic</span>
+<span id="cb24-112"><a href="#cb24-112" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>es refers to standardized effect size.</span>
+<span id="cb24-113"><a href="#cb24-113" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-116"><a href="#cb24-116" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-117"><a href="#cb24-117" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: propensity score</span></span>
+<span id="cb24-118"><a href="#cb24-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Caregiver propensity score</span></span>
+<span id="cb24-119"><a href="#cb24-119" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-subcap: </span></span>
+<span id="cb24-120"><a href="#cb24-120" aria-hidden="true" tabindex="-1"></a><span class="co">#| - caregiver balance measure</span></span>
+<span id="cb24-121"><a href="#cb24-121" aria-hidden="true" tabindex="-1"></a><span class="co">#| - att propensity score boxplot</span></span>
+<span id="cb24-122"><a href="#cb24-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-123"><a href="#cb24-123" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ps_gbm)</span>
+<span id="cb24-124"><a href="#cb24-124" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(ps_gbm, <span class="at">plots =</span> <span class="st">"boxplot"</span>)</span>
+<span id="cb24-125"><a href="#cb24-125" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-126"><a href="#cb24-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-127"><a href="#cb24-127" aria-hidden="true" tabindex="-1"></a><span class="in">```{r class.output="scroll-100"}</span></span>
+<span id="cb24-128"><a href="#cb24-128" aria-hidden="true" tabindex="-1"></a>caregiver_balance <span class="ot">&lt;-</span> <span class="fu">bal.table</span>(ps_gbm)</span>
+<span id="cb24-129"><a href="#cb24-129" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-130"><a href="#cb24-130" aria-hidden="true" tabindex="-1"></a>caregiver_balance</span>
+<span id="cb24-131"><a href="#cb24-131" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-132"><a href="#cb24-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-133"><a href="#cb24-133" aria-hidden="true" tabindex="-1"></a><span class="in">```{r class.output="scroll-100"}</span></span>
+<span id="cb24-134"><a href="#cb24-134" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: summary variable</span></span>
+<span id="cb24-135"><a href="#cb24-135" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: relative influence</span></span>
+<span id="cb24-136"><a href="#cb24-136" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-width: 10</span></span>
+<span id="cb24-137"><a href="#cb24-137" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-height: 25</span></span>
+<span id="cb24-138"><a href="#cb24-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-139"><a href="#cb24-139" aria-hidden="true" tabindex="-1"></a><span class="co"># summary(ps_gbm$gbm.obj, plot = TRUE)</span></span>
+<span id="cb24-140"><a href="#cb24-140" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(ps_gbm<span class="sc">$</span>gbm.obj,</span>
+<span id="cb24-141"><a href="#cb24-141" aria-hidden="true" tabindex="-1"></a>        <span class="do">## choose the number of iterations to be the optimal number</span></span>
+<span id="cb24-142"><a href="#cb24-142" aria-hidden="true" tabindex="-1"></a>        <span class="do">## for minimizing the largest of the KS statistics</span></span>
+<span id="cb24-143"><a href="#cb24-143" aria-hidden="true" tabindex="-1"></a>        <span class="at">n.trees =</span> ps_gbm<span class="sc">$</span>desc<span class="sc">$</span>es.mean.ATT<span class="sc">$</span>n.trees,</span>
+<span id="cb24-144"><a href="#cb24-144" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb24-145"><a href="#cb24-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-146"><a href="#cb24-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-149"><a href="#cb24-149" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-150"><a href="#cb24-150" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(survey)</span>
+<span id="cb24-151"><a href="#cb24-151" aria-hidden="true" tabindex="-1"></a><span class="do">## get.weights is from twang package</span></span>
+<span id="cb24-152"><a href="#cb24-152" aria-hidden="true" tabindex="-1"></a>caregiver_table_2<span class="sc">$</span>w <span class="ot">&lt;-</span> <span class="fu">get.weights</span>(ps_gbm, </span>
+<span id="cb24-153"><a href="#cb24-153" aria-hidden="true" tabindex="-1"></a>                         <span class="do">## stop.method specifies which gbm weights to use</span></span>
+<span id="cb24-154"><a href="#cb24-154" aria-hidden="true" tabindex="-1"></a>                         <span class="at">stop.method =</span> <span class="st">"es.mean"</span>)</span>
+<span id="cb24-155"><a href="#cb24-155" aria-hidden="true" tabindex="-1"></a><span class="do">## svydesign is from survey package</span></span>
+<span id="cb24-156"><a href="#cb24-156" aria-hidden="true" tabindex="-1"></a>design.ps <span class="ot">&lt;-</span> <span class="fu">svydesign</span>(<span class="at">ids =</span> <span class="sc">~</span><span class="dv">1</span>, </span>
+<span id="cb24-157"><a href="#cb24-157" aria-hidden="true" tabindex="-1"></a>                       <span class="at">weights =</span> <span class="sc">~</span>w, </span>
+<span id="cb24-158"><a href="#cb24-158" aria-hidden="true" tabindex="-1"></a>                       <span class="at">data =</span> caregiver_table_2)</span>
+<span id="cb24-159"><a href="#cb24-159" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-160"><a href="#cb24-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-161"><a href="#cb24-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-164"><a href="#cb24-164" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb24-165"><a href="#cb24-165" aria-hidden="true" tabindex="-1"></a><span class="do">## this is the working dataset for the paper analysis</span></span>
+<span id="cb24-166"><a href="#cb24-166" aria-hidden="true" tabindex="-1"></a>caregiver_score <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(<span class="st">"new_data/score_caregiver_survey_scored.csv"</span>)</span>
+<span id="cb24-167"><a href="#cb24-167" aria-hidden="true" tabindex="-1"></a>data2 <span class="ot">&lt;-</span> caregiver_score <span class="sc">%&gt;%</span></span>
+<span id="cb24-168"><a href="#cb24-168" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">cid =</span> <span class="fu">as.character</span>(uniqueid2)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-169"><a href="#cb24-169" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="sc">-</span>record_id, <span class="sc">-</span>spanish, <span class="sc">-</span>randomize, <span class="sc">-</span>language,</span>
+<span id="cb24-170"><a href="#cb24-170" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>stage, <span class="sc">-</span>stage2, <span class="sc">-</span>diagnosis, <span class="sc">-</span>diagn.lc, </span>
+<span id="cb24-171"><a href="#cb24-171" aria-hidden="true" tabindex="-1"></a>                <span class="sc">-</span>gender_clean, <span class="sc">-</span>hospital, <span class="sc">-</span>status2) <span class="sc">%&gt;%</span></span>
+<span id="cb24-172"><a href="#cb24-172" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inner_join</span>(caregiver_table_2, <span class="at">by =</span> <span class="fu">join_by</span>(cid <span class="sc">==</span> cid)) <span class="sc">%&gt;%</span></span>
+<span id="cb24-173"><a href="#cb24-173" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(cid, pid, randomize, <span class="fu">everything</span>()) <span class="sc">%&gt;%</span></span>
+<span id="cb24-174"><a href="#cb24-174" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>()</span>
+<span id="cb24-175"><a href="#cb24-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-176"><a href="#cb24-176" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-177"><a href="#cb24-177" aria-hidden="true" tabindex="-1"></a>??? weight in <span class="in">`lme()`</span> is the variance function Hence, I should use <span class="in">`weights = ~ I(1/b)`</span> in <span class="in">`lme()`</span> to have the variance of $\epsilon_i = 1/b_i$</span>
+<span id="cb24-178"><a href="#cb24-178" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-179"><a href="#cb24-179" aria-hidden="true" tabindex="-1"></a>In <span class="in">`lm()`</span> what you pass weights seems is the exact opposite; weights is inversely proportional to the variance.</span>
+<span id="cb24-180"><a href="#cb24-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-181"><a href="#cb24-181" aria-hidden="true" tabindex="-1"></a><span class="in">```{r class.output="scroll-100"}</span></span>
+<span id="cb24-182"><a href="#cb24-182" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(nlme)</span>
+<span id="cb24-183"><a href="#cb24-183" aria-hidden="true" tabindex="-1"></a>mod0 <span class="ot">&lt;-</span> <span class="fu">lme</span>(zbi <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> stage <span class="sc">+</span> step <span class="sc">+</span> diagnosis <span class="sc">+</span> age <span class="sc">+</span> gender <span class="sc">+</span> randomize <span class="sc">*</span> time,</span>
+<span id="cb24-184"><a href="#cb24-184" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> hospital,</span>
+<span id="cb24-185"><a href="#cb24-185" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> cid), </span>
+<span id="cb24-186"><a href="#cb24-186" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> data2)</span>
+<span id="cb24-187"><a href="#cb24-187" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod0)</span>
+<span id="cb24-188"><a href="#cb24-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-189"><a href="#cb24-189" aria-hidden="true" tabindex="-1"></a>mod1 <span class="ot">&lt;-</span> <span class="fu">lme</span>(zbi <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> w <span class="sc">+</span> randomize <span class="sc">*</span> time, </span>
+<span id="cb24-190"><a href="#cb24-190" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> hospital,</span>
+<span id="cb24-191"><a href="#cb24-191" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> cid), </span>
+<span id="cb24-192"><a href="#cb24-192" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> data2)</span>
+<span id="cb24-193"><a href="#cb24-193" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod1)</span>
+<span id="cb24-194"><a href="#cb24-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-195"><a href="#cb24-195" aria-hidden="true" tabindex="-1"></a>mod2 <span class="ot">&lt;-</span> <span class="fu">lme</span>(zbi <span class="sc">~</span> <span class="dv">0</span> <span class="sc">+</span> randomize <span class="sc">*</span> time,</span>
+<span id="cb24-196"><a href="#cb24-196" aria-hidden="true" tabindex="-1"></a>            <span class="at">random =</span> <span class="fu">list</span>(<span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> hospital,</span>
+<span id="cb24-197"><a href="#cb24-197" aria-hidden="true" tabindex="-1"></a>                          <span class="sc">~</span><span class="dv">1</span> <span class="sc">|</span> cid), </span>
+<span id="cb24-198"><a href="#cb24-198" aria-hidden="true" tabindex="-1"></a>            <span class="at">weights =</span> <span class="sc">~</span> <span class="fu">I</span>(<span class="dv">1</span><span class="sc">/</span>w),</span>
+<span id="cb24-199"><a href="#cb24-199" aria-hidden="true" tabindex="-1"></a>            <span class="at">data =</span> data2)</span>
+<span id="cb24-200"><a href="#cb24-200" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-201"><a href="#cb24-201" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(mod2)</span>
+<span id="cb24-202"><a href="#cb24-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb24-203"><a href="#cb24-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-204"><a href="#cb24-204" aria-hidden="true" tabindex="-1"></a><span class="in">```{r class.output="scroll-100"}</span></span>
+<span id="cb24-205"><a href="#cb24-205" aria-hidden="true" tabindex="-1"></a><span class="co">#|: warnings = false</span></span>
+<span id="cb24-206"><a href="#cb24-206" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod0)</span>
+<span id="cb24-207"><a href="#cb24-207" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod1)</span>
+<span id="cb24-208"><a href="#cb24-208" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(mod2)</span>
+<span id="cb24-209"><a href="#cb24-209" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+</code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div></div></div></div></div>
+</div> <!-- /content -->
+
+
+
+</body></html>

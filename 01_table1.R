@@ -300,7 +300,7 @@ caregiver_table_2 <- caregiver_table_1 %>%
             income = case_when(income == 0 ~ 0, # missing
                                income == 1 ~ 1, # lower than 4000
                                income > 1 ~ 2), # higher 4000
-            randomize = case_when(randomize == 0 ~ 2, # control
+            randomize = case_when(randomize == 0 ~ 0, # control
                                   randomize == 1 ~ 1), # treatment
             diagnosis = case_when(diagnosis == 1 ~ 1, # lung cancer
                                   diagnosis %in% c(2, 3, 4) ~ 2), # head neck cancer
@@ -325,7 +325,7 @@ caregiver_table_2 <- caregiver_table_1 %>%
          employed = as.factor(employed),
          education = as.factor(education),
          income = as.factor(income),
-         randomize = as.factor(randomize),
+         randomize = as.numeric(randomize),
          diagnosis = as.factor(diagnosis),
          stage = as.factor(stage),
          step = as.factor(step),
@@ -379,8 +379,8 @@ caregiver_table_3 <- caregiver_table_2 %>%
             income = case_when(income == 0 ~ "Missing", # missing
                                income == 1 ~ "Less than 4000", # lower than 4000
                                income == 2 ~ "More than 4000"), # higher 4000
-            randomize = case_when(randomize == 2 ~ "Usual care",
-                                  randomize == 0 ~ "Missing",
+            randomize = case_when(randomize == 0 ~ "Usual care",
+                                  randomize == 1 ~ "Missing",
                                   randomize == 1 ~ "Intervention"),
             diagnosis = case_when(diagnosis == 1 ~ "Lung cancer", # lung cancer
                                   diagnosis == 0 ~ "Missing",
