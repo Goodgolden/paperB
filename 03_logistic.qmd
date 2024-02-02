@@ -1,5 +1,5 @@
 ---
-title: "03_logistic"
+title: "Propensity Score"
 ---
 
 ```{r setup, include=FALSE}
@@ -54,7 +54,7 @@ load("new_data/demo_clean_caregiver_merge_2_2023-11-02.Rdata")
 }
 ```
 
-The dataset we used for caregiver table1 @sec-c1-table1 
+The dataset we used for caregiver table1 @sec-c1-table1
 
 ```{r "dataset", class.output="scroll-100"}
 caregiver_table_2
@@ -78,7 +78,6 @@ ps_mod1 <- glm(randomize ~ 0 + primary_caregiver + primary_reason + employed +
                     data = caregiver_table_2,
                     family = binomial("logit"))
 ```
-
 
 ```{r "results_logisitic", class.output="scroll-100"}
 summary(ps_mod1)
@@ -223,7 +222,6 @@ plot5 <- ggplot() +
   coord_cartesian(xlim = c(0, 1), ylim = c(-150, 150)) +
   labs(x = "Propensity", y = "Count") 
 ```
-
 
 ```{r}
 #| label: correction_ps

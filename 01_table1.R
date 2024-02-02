@@ -61,7 +61,8 @@ patient_tracking <- read_csv("new_data/tracking_full_patient.csv") %>%
   dplyr::select(pid = upi, 
                 race,
                 # language, # gender, gender_clean, 
-                age, # ethnicity, ethnicity_clean, race, hnc, lc, 
+                age,  ethnicity, ethnicity_clean, 
+                # race, hnc, lc, 
                 # diagnosis, 
                 step,
                 contains("partnerid"))
@@ -165,10 +166,9 @@ caregiver <- full_join(caregiver_survey, caregiver_tracking,
 #  partnerid3 %in% c_unpair$cid |
 #  partnerid4 %in% c_unpair$cid | 
 #  partnerid5 %in% c_unpair$cid)
-
 pair <- read_csv("new_data/perfect_pair_fixed_2023-09-28.csv") %>%
-  mutate(pid = as.character(pid))
-
+  mutate(pid = as.character(pid)) %>%
+  filter(!is.na(cid) | !is.na(pid))
 
 ## 5. fill out NAs ----------------------------------------------------------------
 # comments_caregiver <- read_csv("new_data/survey_comments_caregiver.csv") %>%
@@ -178,7 +178,7 @@ pair <- read_csv("new_data/perfect_pair_fixed_2023-09-28.csv") %>%
 patient_caregiver <- full_join(caregiver, pair, by = "cid") %>% 
   full_join(patient, by = "pid",
             suffix = c(".caregiver", ".patient")) %>%
-  dplyr::select(pid, cid, order(names(.)))
+  dplyr::select(pid, cid, order(names(.))) 
 
 # caregiver_table1 ------------------------------------------------------------
 caregiver_table_1 <- patient_caregiver %>%
@@ -332,6 +332,7 @@ caregiver_table_2 <- caregiver_table_1 %>%
          hospital = as.factor(hospital))
 
 
+# caregiver_table3-------------------------------------------------------------
 caregiver_table_3 <- caregiver_table_2 %>%
   transmute(cid = as.character(cid), pid, age, # numeric values 
             age_binary = case_when(age_binary == 2 ~ "Young than 60", # young
@@ -396,120 +397,284 @@ caregiver_table_3 <- caregiver_table_2 %>%
                                  hospital == 3 ~ "St.Marys",
                                  hospital == 4 ~ "National Jewish",
                                  hospital == 5 ~ "UCCC"))
+
+
+# patient_table1 ---------------------------------------------------------------
+patient_table_1 <- patient_caregiver %>%
+  transmute(cid, pid, 
+            age = age.psurvey,
+            gender = gender_clean.patient, 
+            ## 
+            language = case_when(is.na(language) & spanish.patient == 1 ~ 1,
+                                 is.na(language) & spanish.patient == 0 ~ 2,
+                                 .default = language), 
+            # spanish = spanish.patient,
+            ## language is filled out with both the survey data language
+            ## also the tracking dataset speak and read, 
+            ## also with the spanish and english survey form
+            ethnicity = ethnicity_clean.patient,
+            race = race.patient,
+            primary_reason = case_when(!is.na(reason) ~ reason,
+                                       is.na(reason) ~ -1),
+            ## reason 5 NAs, create new values for missing
+            ## cared for the patient for any reason
+            ## or illness that is not related to their cancer treatment?
+            ## 1 yes; 0 no; -1 missing as factor
+            household = case_when(is.na(household.patient) ~ 0,
+                                  !is.na(household.patient) ~ household.patient),
+            ## household has 6 NAs just left as missing 
+            ##
+            relationship = case_when(cid == 4033 ~ 2,
+                                     .default = relationship),
+            ## one caregiver as partner mislabeled as non-relative 
+            ##
+            employed = employed.patient,
+            retired = retired.patient,
+            ## retired will be removed but keep employed
+            ## 
+            education = education.patient,
+            ## education 1 NA the caregiver does not have patient in dataset
+            ## age 38 female non-primary employed caregiver 
+            ## most other caregivers are with college degree
+            ## 
+            income = case_when(cid == 2057 ~ 1,
+                               pid == 1042 ~ 1,
+                               is.na(income.patient) ~ 0,
+                               !is.na(income.patient) ~ income.patient),
+            ## 
+            randomize = randomize.patient,
+            ## 
+            diagnosis = diagnosis.patient, 
+            ##
+            stage = case_when(!is.na(stage.patient) ~ stage.patient,
+                              is.na(stage.patient) & is.na(stage.patient) ~ 5,
+                              is.na(stage.patient) ~ stage.patient),
+            ## the stage 10 NAs for missing in the level5
+            ## will be converted into binary early and late
+            ##
+            step = step_baseline,
+            ## the step information is not consistent between 
+            ## patient and caregiver 
+            ##
+            hospital = hospital.patient)
+# patient_table2 ---------------------------------------------------------------
+
+patient_table_2 <- patient_table_1 %>%
+  transmute(cid = as.character(cid), pid = as.character(pid), 
+            age, # numeric values 
+            age_binary = case_when(age < 60 ~ 2, # young
+                                   age >= 60 ~ 1), # old
+            ethnicity = ethnicity,
+            gender, # 1 male; 2 female
+            language = case_when(language == 1 ~ 1, # spanish only
+                                 language == 2 | language == 3  ~ 2), # english or both
+            race = case_when(race == 1 ~ 1, ## white
+                             race != 1 ~ 2, ## other
+                             is.na(race) ~ 0), ## missing
+            primary_reason = case_when(primary_reason == 0 ~ 2, # no
+                                       primary_reason == 1 ~ 1, # yes
+                                       primary_reason == -1 ~ 0),
+            household = case_when(household == 0 ~ 0, # unknown missing
+                                  household == 1 ~ 1, # single 
+                                  household == 2 ~ 2, # two 
+                                  household > 2 ~ 3), # more than two
+            relationship = case_when(relationship %in% c(1, 2) ~ 1, # couple
+                                     relationship %in% c(3, 4, 5, 6) ~ 2, # parent_children
+                                     relationship %in% c(7, 8, 9, 10) ~ 3,  # others
+                                     is.na(relationship) ~ 0), # missing
+            employed = case_when(employed == 0 ~ 2,
+                                 employed == 1 ~ 1),  
+            # retired,
+            education = case_when(is.na(education) ~ 0, # missing
+                                  education <= 12 ~ 1, # high school
+                                  education > 12 ~ 2), # college level
+            ## education 1 NA the patient does not have patient in dataset
+            ## age 38 female non-primary employed patient 
+            ## most other patients are with college degree
+            income = case_when(income == 0 ~ 0, # missing
+                               income == 1 ~ 1, # lower than 4000
+                               income > 1 ~ 2), # higher 4000
+            randomize = case_when(randomize == 0 ~ 0, # control
+                                  randomize == 1 ~ 1), # treatment
+            diagnosis = case_when(diagnosis == 1 ~ 1, # lung cancer
+                                  diagnosis %in% c(2, 3, 4) ~ 2), # head neck cancer
+            stage = case_when(stage %in% c(0, 1, 2) ~ 1, # early
+                              stage %in% c(3, 4) ~ 2, # late 
+                              stage == 5 ~ 0), # pending or missing 
+            step = case_when(step %in% c(1, 2) ~ 1, # early
+                             step %in% c(3, 4) ~ 2, # late
+                             step == 5 ~ 0), # pending or missing
+            hospital = hospital) %>% # 1 Denver Health; 2 St.Joe’s;
+  # 3 St.Mary’s; 4 National Jewish; 5 UCCC
+  mutate(age_binary = as.factor(age_binary),
+         gender = as.factor(gender),
+         language = as.factor(language),
+         ethnicity = as.factor(ethnicity),
+         race = as.factor(race),
+         primary_reason = as.factor(primary_reason),
+         household = as.factor(household),
+         relationship = as.factor(relationship),
+         employed = as.factor(employed),
+         education = as.factor(education),
+         income = as.factor(income),
+         randomize = as.numeric(randomize),
+         diagnosis = as.factor(diagnosis),
+         stage = as.factor(stage),
+         step = as.factor(step),
+         hospital = as.factor(hospital))
+
+# patient_table3 ----------------------------------------------------------------
+patient_table_3 <- patient_table_2 %>%
+  transmute(cid = as.character(cid), pid = as.character(pid), age, # numeric values 
+            age_binary = case_when(age_binary == 2 ~ "Young than 60", # young
+                                   age_binary == 0 ~ "Missing",
+                                   age_binary == 1 ~ "Older than 60"), # old
+            gender = case_when(gender == 1 ~ "Male",
+                               gender == 0 ~ "Missing",
+                               gender == 2 ~ "Female"), # 1 male; 2 female
+            language = case_when(language == 1 ~ "Spanish", # spanish only
+                                 language == 0 ~ "Missing",
+                                 language == 2 ~ "English or Both"), # english or both
+            ethnicity = case_when(ethnicity == 1 ~ "Non-Hispanic",
+                                  is.na(ethnicity) ~ "Missing",
+                                  ethnicity == 2 ~ "Hispanic"), # 1 non-hispanic; 2 hispanic
+            race_white = case_when(race == 1 ~ "White", ## white
+                                   race == 2 ~ "Other",  ## other
+                                   race == 0 ~ "Missing"),
+            # primary_patient = case_when(primary_patient == 2 ~ "No",
+            #                               primary_patient == 1 ~ "Yes",
+            #                               primary_patient == 0 ~ "Missing"), 
+            # hours = case_when(hours == 0 ~ "Missing", # missing
+            #                   hours == 1 ~ "Less than 10 hours", # less than 10
+            #                   hours == 2 ~ "More than 10 hours"), # more than 10 less than 20
+            household = case_when(household == 0 ~ "Missing", # unknown
+                                  household == 1 ~ "One", # single 
+                                  household == 2 ~ "Two", # two 
+                                  household == 3 ~ "More than two"), # more than two
+            employed = case_when(employed == 2 ~ "No",
+                                 employed == 0 ~ "Missing",
+                                 employed == 1 ~ "Yes"), 
+            # retired,
+            education = case_when(education == 0 ~ "Missing", # not in college
+                                  education == 1 ~ "High school or lower",
+                                  education == 2 ~ "College or graduate school"), # college level
+            ## education 1 NA the patient does not have patient in dataset
+            ## age 38 female non-primary employed patient 
+            ## most other patients are with college degree
+            # income = case_when(income == 0 ~ "Missing", # missing
+            #                    income == 1 ~ "Less than 4000", # lower than 4000
+            #                    income == 2 ~ "More than 4000"), # higher 4000
+            randomize = case_when(randomize == 0 ~ "Usual care",
+                                  randomize == 1 ~ "Missing",
+                                  randomize == 1 ~ "Intervention"),
+            diagnosis = case_when(diagnosis == 1 ~ "Lung cancer", # lung cancer
+                                  diagnosis == 0 ~ "Missing",
+                                  diagnosis == 2 ~ "Head & Neck cancer"), # head neck cancer
+            stage = case_when(stage == 1 ~ "Early", # early
+                              stage == 2 ~ "Late", # late 
+                              stage == 0 ~ "Missing"), # pending or missing 
+            step = case_when(step == 1 ~ "Early", # early
+                             step == 2 ~ "Late", # late
+                             step == 0 ~ "Missing"), # pending or missing
+            hospital = case_when(hospital == 1 ~ "Denver Health",
+                                 hospital == 2 ~ "St.Joes",
+                                 hospital == 3 ~ "St.Marys",
+                                 hospital == 4 ~ "National Jewish",
+                                 hospital == 5 ~ "UCCC"))
+
+caregiver_score <- read_csv("new_data/score_caregiver_survey_scored.csv") %>%
+  mutate(cid = uniqueid2) %>% 
+  select(cid, time, pss_c = pss, zbi_c = zbi, 
+         cops_c = cops, hads_c = hads,
+         anxraw_c = anxraw, depraw_c = depraw)
+patient_score <- read_csv("new_data/score_patient_survey_scored.csv") %>%
+  mutate(pid = uniqueid2) %>% 
+  select(pid, time, pss_p = pss, factg_p = factg,  cops_p = cops, 
+         hads_p = hads, anxraw_p = anxraw, depraw_p = depraw) 
+
+# View(patient_caregiver)
+# View(patient_table_2)
 # View(caregiver_table_1)
 # View(caregiver_table_2)
 # View(caregiver_table_3)
 
 
 save(caregiver_table_1, file = paste0("new_data/demo_clean_caregiver_original_1_", 
-                                           Sys.Date(), ".Rdata"))
+                                      Sys.Date(), ".Rdata"))
 save(caregiver_table_2, file = paste0("new_data/demo_clean_caregiver_merge_2_", 
-                                           Sys.Date(), ".Rdata"))
+                                      Sys.Date(), ".Rdata"))
 save(caregiver_table_3, file = paste0("new_data/demo_clean_caregiver_factor_2_", 
-                                           Sys.Date(), ".Rdata"))
+                                      Sys.Date(), ".Rdata"))
+write_csv(caregiver_table_3, file = paste0("new_data/demo_clean_caregiver_factor_2_", 
+                                           Sys.Date(), ".csv"))
+
+save(patient_table_1, file = paste0("new_data/demo_clean_patient_original_1_", 
+                                      Sys.Date(), ".Rdata"))
+save(patient_table_2, file = paste0("new_data/demo_clean_patient_merge_2_", 
+                                      Sys.Date(), ".Rdata"))
+save(patient_table_3, file = paste0("new_data/demo_clean_patient_factor_2_", 
+                                      Sys.Date(), ".Rdata"))
+write_csv(patient_table_3, file = paste0("new_data/demo_clean_patient_factor_2_", 
+                                           Sys.Date(), ".csv"))
+
+patient_score_final <- patient_table_3 %>%
+  mutate(pid = as.integer(pid), 
+         group = "pateint") %>%
+  full_join(patient_score, by = "pid") %>%
+  group_by(pid) %>%
+  arrange(time) %>%
+  fill() %>%
+  ungroup() %>%
+  select(pid, cid, time, everything())
+
+caregiver_score_final <- caregiver_table_3 %>%
+  mutate(cid = as.integer(cid),
+          group = "caregiver") %>%
+  full_join(caregiver_score, by = "cid") %>%
+  group_by(cid) %>%
+  arrange(time) %>%
+  fill() %>%
+  ungroup() %>%
+  select(pid, cid, time, everything())
+
+names(patient_score_final)
+names(caregiver_score_final)
+
+zz <- merge(patient_score_final, caregiver_score_final, all = TRUE)
+
+View(zz)
+View(paired_score_final)
 
 
-# Old codes --------------------------------------------------------------------
-# ## the dataset for standardized difference calculation
-# caregiver_std <- caregiver_std %>%
-#   mutate(Randomize = case_when(Randomize == "Control" ~ 0,
-#                                Randomize == "Intervention" ~ 1),
-#          Caregiver = case_when(Caregiver == "Primary" ~ 1,
-#                                Caregiver == "Non-primary" ~ 0),
-#          `Primary Reason` = case_when(`Primary Reason` == "Yes" ~ 1,
-#                                       `Primary Reason` == "No" ~ 0),
-#          Employed = case_when(Employed == "Yes" ~ 1,
-#                               Employed == "No" ~ 0),
-#          Retired = case_when(Retired == "Yes" ~ 1,
-#                              Retired == "No" ~ 0),
-#          # `Age Group` = case_when(Age < 18 ~ 1,
-#          #                          Age <= 65 & Age >= 18 ~ 2,
-#          #                          Age > 65 ~ 3),
-#          Language = case_when(Language == "English" ~ 0,
-#                               Language == "Spanish" ~ 1),
-#          Gender = case_when(Gender == "Male" ~ 0,
-#                             Gender == "Female" ~ 1),
-#          Ethnicity = case_when(Ethnicity == "Hispanic" ~ 0,
-#                                Ethnicity == "Non-Hispanic" ~ 1),
-#          Race = case_when(Race == "Caucasian" ~ 1,
-#                           Race == "Others" ~ 0),
-#          Diagnosis = case_when(Diagnosis == "Lung cancer" ~ 1,
-#                                Diagnosis == "Head and neck cancer" ~ 2),
-#          Stage = case_when(Stage == "Early" ~ 1,
-#                            Stage == "Late" ~ 2),
-#          Step = case_when(Step == "Step 1&2" ~ 1,
-#                           Step == "Step 3&4" ~ 2),
-#          Income = case_when(Income == "1. Less than $4,000" ~ 1,
-#                             Income == "2. Less than $5,400" ~ 2,
-#                             Income == "3. More than $5,400" ~ 3),
-#          Education = case_when(Education == "1. High school or less" ~ 1,
-#                                Education == "2. College or more" ~ 2),
-#          Household = case_when(Household == "1. One" ~ 1,
-#                                Household == "2. Two or Three" ~ 2,
-#                                Household == "4. Four or more" ~ 3),
-#          Relationship = case_when(Relationship == "1. Spouses or Partners" ~ 1,
-#                                   Relationship == "2. Parents" ~ 2,
-#                                   Relationship == "3. Children" ~ 3,
-#                                   Relationship == "4. Relatives" ~ 4,
-#                                   Relationship == "5. Others" ~ 5),
-#          `Caring Hours` = case_when(`Caring Hours` == "1. Less than 5" ~ 1,
-#                                     `Caring Hours` == "2. From 5 to 10" ~ 2,
-#                                     `Caring Hours` == "3. From 10 to 20" ~ 3,
-#                                     `Caring Hours` == "4. More than 20" ~ 4),
-#          Hospital = case_when(Hospital == "Denver Health" ~ 1,
-#                               Hospital == "St.Joes" ~ 2,
-#                               Hospital == "St.Marys" ~ 3,
-#                               Hospital == "National Jewish" ~ 4,
-#                               Hospital == "UCCC" ~ 5)) %>%
-#   dplyr::select(ID,                 # 1
-#                 Randomize,          # 2
-#                 Caregiver,          # 3 binary
-#                 Primary.Reason,   # 4 binary
-#                 Employed,           # 5 binary
-#                 Retired,            # 6 binary
-#                 Education,          # 7 binary
-#                 Language,            # 8 binary
-#                 Gender,             # 9 binary
-#                 Ethnicity,           # 10 binary
-#                 Race,              # 11 binary
-#                 Diagnosis,          # 12 binary
-#                 Stage,         # 13 binary
-#                 Step,          # 14 binary
-#                 Age,                # 15 numeric
-#                 Income,             # 16 categorical
-#                 Household,          # 17 categorical
-#                 Relationship,       # 18 categorical
-#                 Caring.Hours,     # 19 categorical
-#                 # Insurance
-#                 Hospital)           # 20 categorical
-# caregiver[caregiver == "*missing"] <- NA
-# 
-# 
-# ## this is the working dataset for the paper analysis
-# caregiver_all <- caregiver_score %>%
-#   dplyr::select(-record_id, -spanish, -randomize, -language,
-#                 -stage, -stage2, -diagnosis, -diagn.lc, 
-#                 -gender_clean, -hospital, -status2) %>%
-#   full_join(caregiver, by = join_by(uniqueid2 == ID)) %>%
-#   dplyr::select(ID = uniqueid2, Randomize, everything())
-# 
-# ## save the datasets in the newdata folder
-# 
-# write_csv(caregiver_all, file = paste0("new_data/data_table1_caregiver_all_paper_", Sys.Date(), ".csv"))
-# write.csv(caregiver, file = paste0("new_data/data_table1_caregiver_binary_", Sys.Date(), ".csv"))
-# write.csv(caregiver_std, file = paste0("new_data/data_table1_caregiver_numeric_std_", Sys.Date(), ".csv"))
+save(caregiver_score_final, patient_score_final, 
+     file = paste0("new_data/s1_clean_patient_caregiver_demo_score_factor_",
+                   Sys.Date(), ".Rdata"))
+write_csv(patient_score_final, 
+          file = paste0("new_data/s1_clean_patient_demo_score_factor_",
+                        Sys.Date(), ".csv"))
+write_csv(caregiver_score_final, 
+          file = paste0("new_data/s1_clean_caregiver_demo_score_factor_",
+                        Sys.Date(), ".csv"))
 
 
 
+perfect_pair <- pair %>%
+  group_by(pid) %>%
+  sample_n(1)
+
+# View(perfect_pair)
+# table(perfect_pair$pid)
+# table(pair$pid)
+
+paired_score_final <- perfect_pair %>%
+  mutate(pid = as.integer(pid), cid = as.integer(cid)) %>%
+  inner_join(patient_score_final) %>%
+  mutate(pid = as.character(pid)) %>%
+  inner_join(caregiver_score_final, by = c("cid", "pid", "time"), 
+             suffix = c(".patient", ".caregiver"))
 
 
-
-
-
-
-
-
-
-
-
-
+write_csv(paired_score_final, 
+          file = paste0("new_data/s1_clean_paired_demo_score_factor_",
+                        Sys.Date(), ".csv"))
+# table(pc_score_final$cid)

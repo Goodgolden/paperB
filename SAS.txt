@@ -1,0 +1,83 @@
+/*-----------------------------------------------------------------
+            S A S   S A M P L E   L I B R A R Y                   
+                                                                  
+      NAME: gmxex05                                               
+     TITLE: Documentation Example 5 for PROC GLIMMIX              
+            Joint Modeling of Binary and Count Data               
+   PRODUCT: STAT                                                  
+    SYSTEM: ALL                                                   
+      KEYS: Generalized linear mixed models                       
+            Multivariate data from different distributions        
+            Varying distribution by observation                   
+            Fusing with joint random effects                      
+     PROCS: GLIMMIX                                               
+      DATA: Mosteller, F. and Tukey, J.W. (1977)                  
+            Data Analysis and Regression                          
+            Reading, MA: Addison-Wesley                           
+                                                                  
+   SUPPORT: Oliver Schabenberger                                  
+       REF:                                                       
+      MISC:                                                       
+-----------------------------------------------------------------*/
+
+###
+#  model y ~ general(weightfunc*LL);
+# run;
+
+
+
+data hernio;
+  input patient age gender$ OKstatus leave los;
+  datalines;
+
+data hernio_uv;
+   length dist $7;
+   set hernio;
+   response = (leave=1);
+   dist     = "Binary";
+   output;
+   response = los;
+   dist     = "Poisson";
+   output;
+   keep patient age OKstatus response dist;
+run;
+
+proc glimmix data=hernio_uv(where=(dist="Binary"));
+   model response(event='1') = age OKStatus / s dist=binary;
+run;
+
+proc glimmix data=hernio_uv(where=(dist="Poisson"));
+   model response = age OKStatus / s dist=Poisson;
+run;
+
+proc glimmix data=hernio_uv;
+   class dist;
+   model response(event='1') = dist dist*age dist*OKstatus /
+                    noint s dist=byobs(dist);
+run;
+
+proc glimmix data=hernio_uv;
+   class patient dist;
+   model response(event='1') = dist dist*age dist*OKstatus /
+                    noint s dist=byobs(dist);
+   random int / subject=patient;
+run;
+
+proc glimmix data=hernio_uv;
+   class patient dist;
+   model response(event='1') = dist dist*age dist*OKstatus /
+                    noint s dist=byobs(dist);
+   random _residual_ / subject=patient type=chol;
+run;
+
+
+
+
+
+The function of a REPLICATE statement is related to but not quite the same as 
+the function of either a FREQ or a WEIGHT statement in 
+other statistical modeling procedures, such as the GLM, GENMOD, GLIMMIX, and 
+LOGISTIC procedures. A FREQ or a WEIGHT value essentially multiplies the log likelihood
+or sum of squares contribution for each observation. 
+On the other hand, a REPLICATE value multiplies the log likelihood contribution
+of each subject, which consists of one or more observations.

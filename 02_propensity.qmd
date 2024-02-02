@@ -194,7 +194,6 @@ summary(mod2)
 ```
 
 ```{r class.output="scroll-100"}
-#| warnings = false
 tidy(mod0)
 tidy(mod1)
 tidy(mod2)

@@ -10,6 +10,9 @@ book:
     - 01_table1.qmd
     - 02_propensity.qmd
     - 03_logistic.qmd
+    - 04_wemix.qmd
+    - 05_agogo_2019.qmd
+    
     - summary.qmd
     - references.qmd
 

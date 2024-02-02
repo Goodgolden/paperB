@@ -1,0 +1,82 @@
+---
+title: "Agogo2019"
+---
+
+## Title 
+
+Joint modeling of concurrent binary outcomes in a longitudinal observational study using inverse probability of treatment weighting for treatment effect estimation
+
+## Intro
+
+weighted by inverse probability of treatment weights (IPTW) to account for confounding
+
+Propensity score (PS) methods are shown to account for confounding bias 
+
+Currently, to our knowledge, there is no research using inverse probability of treatment weights (IPTW) to control for confounding in joint modeling of concurrent binary outcomes.
+
+How to jointly model correlated binary outcomes (**in our case the normal outcome**) by using the shared information between longitudinal outcomes while controlling for confounding due to covariate imbalance between treatment groups. 
+
+A PS is the probability of receiving a treatment conditional on observed covariates, $e(Z_i)$ is given by $e(Zi) = Prob(T_i | Z_i)$
+
+
+We denote a vector of observed baseline covariates that may be associated
+with both the probability of receiving the medication and with
+the risk of an outcome $Y$ by $Z$
+
+
+## Assumptions
+
+First, a subject's potential outcome under the treatment received is assumed equal to the subject's observed outcome. 
+
+Second, it is assumed that there are no unmeasured confounders. 
+
+Third, each subject is assumed to have a nonzero probability of receiving each treatment, and that there is no combination of the covariates such that the PS equals 1
+
+Finally, the PS model is assumed to be correctly specified.
+
+
+$$
+\begin{cases}
+  w(Z_i) = 1 / e(Z_i), &\text{ if } treated \\
+  w(Z_i) = 1/\big(1 - e(Z_i)\big), &\text{ if } untreated
+\end{cases}
+$$
+
+
+## Shared random effects model 
+
+The random effects serve as the conduit for sharing of information between correlated binary outcomes arising from unmeasured variables
+
+$$
+\begin{split}
+  P(Y1_{ij} = 1 | T_i, \mu_i) = \phi(\beta_{01} + \beta_{T_1} T_i + \mu_i)\\
+    P(Y2_{ij} = 1 | T_i, \mu_i) = \phi(\beta_{02} + \beta_{T_2} T_i + \lambda\mu_i)
+\end{split}
+$$
+
+- $\mu_i \sim N(0, \sigma_\mu^2)$ is the shared random intercept representing the unobserved factors underlying a person's susceptibility to either outcome,
+
+- $\lambda$ is the coefficient of the shared random effect for outcome 2, $\beta_{T1}$ and $\beta_{T2}$ quantify the treatment effects
+
+- $\phi$ is the inverse logit link function.
+
+Note that model is weighted by IPTW to control for confounding due to covariate imbalance between treatment groups.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

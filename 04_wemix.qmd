@@ -1,0 +1,145 @@
+---
+title: "Wemix"
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE,
+                      comment = "#>",
+                      #results = "hide",
+                      digits = 4,
+                      error = FALSE)
+
+## clean the R environment
+graphics.off()
+rm(list = ls())
+freshr::freshr()
+
+## load packages
+library(here, quietly = TRUE)
+library(tidyverse, quietly = TRUE)
+library(gtsummary, quietly = TRUE)
+library(flextable, quietly = TRUE)
+
+library(lme4)
+library(Matrix)
+library(WeMix)
+
+## check the directory for the file
+# here::dr_here()
+here::set_here()
+
+## the figure or results should be saved 
+# paste0("foldername/Sfilename_workingresult_", 
+#      Sys.Date(), ".filetype")
+```
+
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 300px;
+  max-width: 1000px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
+
+::: callout-important
+Matrix < 1.6-2 and Matrix >= 1.6-2 are binary incompatible. When you change between them, you must re-install from sources packages that link Matrix and therefore depend on the Matrix.
+
+If not, then you need to install compatible binaries of Matrix and lme4 from a repository. Not all repositories provide compatible binaries, but CRAN does, so the following should work in most cases.
+
+Matrix < 1.6-2 and Matrix >= 1.6-2 are binary incompatible. When you change between them, you must re-install from sources packages that link Matrix and therefore depend on the Matrix ABI:
+
+> tools::package_dependencies("Matrix", which = "LinkingTo", reverse = TRUE)[[1L]]
+ [1] "ahMLE"               "bayesWatch"          "cplm"               
+ [4] "GeneralizedWendland" "hibayes"             "irlba"              
+ [7] "lme4"                "mcmcsae"             "OpenMx"             
+[10] "PRIMME"              "robustlmm"           "spGARCH"            
+[13] "TMB"                 "bcSeq"              
+If you have the required tools [1], then you can re-install lme4 from sources:
+
+Note that binaries in all repositories will be rebuilt automatically once lme4 > 1.1-35.1 is released. At that point, a simple update.packages() call will get things working again, even without explicit setting of repos.
+
+:::
+
+
+
+
+```{r}
+# install.packages("WeMix")
+# 
+# oo <- options(repos = "https://cran.r-project.org/")
+# install.packages("Matrix")
+# install.packages("lme4")
+# options(oo)
+
+```
+
+Standard errors of random effect variances are robust
+
+```{r}
+data(sleepstudy)
+ss1 <- sleepstudy
+
+# Create weights
+ss1$W1 <- ifelse(ss1$Subject %in% c(308, 309, 310), 2, 1)
+ss1$W2 <- 1
+
+# Run random-intercept 2-level model 
+two_level <- mix(Reaction ~ Days + (1|Subject), 
+                 data = ss1, weights = c("W1", "W2"))
+
+#Run random-intercept 2-level model with group-mean centering
+grp_centered <- mix(Reaction ~ Days + (1|Subject), 
+                    data = ss1,
+                    weights = c("W1", "W2"),
+                    verbose = TRUE,
+                    center_group = list("Subject" = ~Days))
+```
+
+
+```{r}
+summary(grp_centered)
+```
+
+
+```{r}
+#Run three level model with random slope and intercept. 
+#add group variables for 3 level model 
+ss1$Group <- 3
+ss1$Group <- ifelse(as.numeric(ss1$Subject) %% 10 < 7, 2, ss1$Group)
+ss1$Group <- ifelse(as.numeric(ss1$Subject) %% 10 < 4, 1, ss1$Group)
+# level-3 weights
+ss1$W3 <- ifelse(ss1$Group == 2, 2, 1)
+```
+
+```{r, class.output="scroll-100"}
+ss1
+```
+
+```{r}
+three_level <- mix(Reaction ~ Days + (1 | Subject) + (1 + Days | Group),
+                   data = ss1,
+                   weights = c("W1", "W2", "W3"))
+```
+
+
+
+```{r, class.output="scroll-100"}
+summary(three_level)
+```
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1104 @@
+
+
+*************************************************************************** 
+CONTAINS Runtime Modules of Parallel Sparse Linear Solver PARDISO Vers. 7.2
+CUSTOMIZED FOR THE R-INLA PACKAGE WHICH SOLVES A LARGE CLASS OF STATISTICAL
+MODELS USING THE INLA APPROACH.                                            
+Copyright Universita della Svizzera italiana 2000-2020 All Rights Reserved.
+
+No PARDISO license file found.  Please see `http://www.pardiso-project.org/r-inla
+where to place the license file pardiso.lic 
+*************************************************************************** 
+	Read ntt 8 1 with max.threads 8
+	Found num.threads = 8:1 max_threads = 8
+
+	882c43d68fb015d72b699bcc458cf277dfe110c2 - Mon Apr 24 16:19:16 2023 +0100
+Report bugs to <help@r-inla.org>
+Set reordering to id=[0] and name=[default]
+Process file[/Users/goodgolden5/Desktop/paper2023B/inla.model/Model.ini] threads[8] max.threads[8] blas_threads[1] nested[8:1]
+inla_build...
+	number of sections=[37]
+	parse section=[0] name=[INLA.libR] type=[LIBR]
+	inla_parse_libR...
+		section[INLA.libR]
+			R_HOME=[/Library/Frameworks/R.framework/Resources]
+	parse section=[34] name=[INLA.Expert] type=[EXPERT]
+	inla_parse_expert...
+		section[INLA.Expert]
+			disable.gaussian.check=[0]
+			Measure dot.product.gain=[No]
+			cpo.manual=[0]
+			jp.file=[(null)]
+			jp.model=[(null)]
+	parse section=[1] name=[INLA.Model] type=[PROBLEM]
+	inla_parse_problem...
+		name=[INLA.Model]
+		R-INLA version = [23.04.24]
+		R-INLA build date = [Mon Apr 24 10:06:18 PM +03 2023 (Version_23.04.24)]
+		Build tag = [Version_23.04.24]
+		System memory = [8.0Gb]
+		Cores = (Physical= 8, Logical= 8)
+		'char' is signed
+		openmp.strategy=[default]
+		pardiso-library installed and working? = [no]
+		smtp = [taucs]
+		strategy = [default]
+		store results in directory=[/Users/goodgolden5/Desktop/paper2023B/inla.model/results.files]
+		output:
+			gcpo=[0]
+				num.level.sets=[-1]
+				size.max=[32]
+				strategy=[Posterior]
+				correct.hyperpar=[1]
+				epsilon=[0.005]
+				prior.diagonal=[0.0001]
+				keep=[]
+				remove.fixed=[1]
+				remove=[]
+			cpo=[1]
+			po=[1]
+			dic=[1]
+			kld=[1]
+			mlik=[1]
+			q=[0]
+			graph=[0]
+			hyperparameters=[1]
+			config=[1]
+			likelihood.info=[0]
+			internal.opt=[1]
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	parse section=[3] name=[Predictor] type=[PREDICTOR]
+	inla_parse_predictor ...
+		section=[Predictor]
+		dir=[predictor]
+		PRIOR->name=[loggamma]
+		hyperid=[53001|Predictor]
+		PRIOR->from_theta=[function (x) <<NEWLINE>>exp(x)]
+		PRIOR->to_theta = [function (x) <<NEWLINE>>log(x)]
+		PRIOR->PARAMETERS=[1, 1e-05]
+		initialise log_precision[13.8155]
+		fixed=[1]
+		user.scale=[1]
+		n=[249]
+		m=[0]
+		ndata=[249]
+		compute=[1]
+		read offsets from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f430b645d] 9/249  (idx,y) = (9, 0)
+		A=[(null)]
+		Aext=[(null)]
+		AextPrecision=[1e+08]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	parse section=[2] name=[INLA.Data1] type=[DATA]
+	inla_parse_data [section 1]...
+		tag=[INLA.Data1]
+		family=[BINOMIAL]
+		likelihood=[BINOMIAL]
+		file->name=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f270bea47]
+		file->name=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f41ef57]
+		file->name=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f50c341a7]
+		file->name=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f41c87a06]
+		read n=[747] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f270bea47]
+		mdata.nattributes = 0
+			0/249  (idx,a,y,d) = (0, 1, 1, 1)
+			1/249  (idx,a,y,d) = (1, 1, 0, 1)
+			2/249  (idx,a,y,d) = (2, 1, 0, 1)
+			3/249  (idx,a,y,d) = (3, 1, 1, 1)
+			4/249  (idx,a,y,d) = (4, 1, 1, 1)
+			5/249  (idx,a,y,d) = (5, 1, 0, 1)
+			6/249  (idx,a,y,d) = (6, 1, 0, 1)
+			7/249  (idx,a,y,d) = (7, 1, 1, 1)
+			8/249  (idx,a,y,d) = (8, 1, 0, 1)
+			9/249  (idx,a,y,d) = (9, 1, 1, 1)
+		likelihood.variant=[0]
+		Link model   [LOGIT]
+		Link order   [-1]
+		Link variant [-1]
+		Link a       [1]
+		Link ntheta  [0]
+		mix.use[0]
+	section=[4] name=[primary_caregiver1] type=[LINEAR]
+	inla_parse_linear...
+		section[primary_caregiver1]
+		dir=[fixed.effect00000001]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20ea380e] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[5] name=[primary_caregiver2] type=[LINEAR]
+	inla_parse_linear...
+		section[primary_caregiver2]
+		dir=[fixed.effect00000002]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f71063003] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[6] name=[primary_reason1] type=[LINEAR]
+	inla_parse_linear...
+		section[primary_reason1]
+		dir=[fixed.effect00000003]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4d3a4eed] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[7] name=[primary_reason2] type=[LINEAR]
+	inla_parse_linear...
+		section[primary_reason2]
+		dir=[fixed.effect00000004]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2f13d137] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[8] name=[employed2] type=[LINEAR]
+	inla_parse_linear...
+		section[employed2]
+		dir=[fixed.effect00000005]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3e0c8a06] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[9] name=[education1] type=[LINEAR]
+	inla_parse_linear...
+		section[education1]
+		dir=[fixed.effect00000006]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2939afbd] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[10] name=[education2] type=[LINEAR]
+	inla_parse_linear...
+		section[education2]
+		dir=[fixed.effect00000007]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001fa40b670] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[11] name=[language2] type=[LINEAR]
+	inla_parse_linear...
+		section[language2]
+		dir=[fixed.effect00000008]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1e897852] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[12] name=[gender2] type=[LINEAR]
+	inla_parse_linear...
+		section[gender2]
+		dir=[fixed.effect00000009]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f533a5f27] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[13] name=[ethnicity2] type=[LINEAR]
+	inla_parse_linear...
+		section[ethnicity2]
+		dir=[fixed.effect00000010]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1d3d2421] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[14] name=[race2] type=[LINEAR]
+	inla_parse_linear...
+		section[race2]
+		dir=[fixed.effect00000011]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f190f0186] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[15] name=[diagnosis2] type=[LINEAR]
+	inla_parse_linear...
+		section[diagnosis2]
+		dir=[fixed.effect00000012]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f282d1144] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[16] name=[stage1] type=[LINEAR]
+	inla_parse_linear...
+		section[stage1]
+		dir=[fixed.effect00000013]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f26c89bf7] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[17] name=[stage2] type=[LINEAR]
+	inla_parse_linear...
+		section[stage2]
+		dir=[fixed.effect00000014]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f3c778905] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[18] name=[step2] type=[LINEAR]
+	inla_parse_linear...
+		section[step2]
+		dir=[fixed.effect00000015]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4bc4c646] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[19] name=[income1] type=[LINEAR]
+	inla_parse_linear...
+		section[income1]
+		dir=[fixed.effect00000016]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f63b54486] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[20] name=[income2] type=[LINEAR]
+	inla_parse_linear...
+		section[income2]
+		dir=[fixed.effect00000017]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f11a5ec8e] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[21] name=[household1] type=[LINEAR]
+	inla_parse_linear...
+		section[household1]
+		dir=[fixed.effect00000018]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f244d67af] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[22] name=[household2] type=[LINEAR]
+	inla_parse_linear...
+		section[household2]
+		dir=[fixed.effect00000019]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f55d224c7] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[23] name=[household3] type=[LINEAR]
+	inla_parse_linear...
+		section[household3]
+		dir=[fixed.effect00000020]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f576cb0d5] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[24] name=[age] type=[LINEAR]
+	inla_parse_linear...
+		section[age]
+		dir=[fixed.effect00000021]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 0/249  (idx,y) = (0, 38)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 1/249  (idx,y) = (1, 49)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 2/249  (idx,y) = (2, 58)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 3/249  (idx,y) = (3, 60)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 4/249  (idx,y) = (4, 52)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 5/249  (idx,y) = (5, 66)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 6/249  (idx,y) = (6, 62)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 7/249  (idx,y) = (7, 77)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 8/249  (idx,y) = (8, 83)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f20cd9cca] 9/249  (idx,y) = (9, 67)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[25] name=[relationship2] type=[LINEAR]
+	inla_parse_linear...
+		section[relationship2]
+		dir=[fixed.effect00000022]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f1af0a299] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[26] name=[relationship3] type=[LINEAR]
+	inla_parse_linear...
+		section[relationship3]
+		dir=[fixed.effect00000023]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f2c42f8a0] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[27] name=[hours1] type=[LINEAR]
+	inla_parse_linear...
+		section[hours1]
+		dir=[fixed.effect00000024]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f60d0e713] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[28] name=[hours2] type=[LINEAR]
+	inla_parse_linear...
+		section[hours2]
+		dir=[fixed.effect00000025]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 0/249  (idx,y) = (0, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 1/249  (idx,y) = (1, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 3/249  (idx,y) = (3, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 6/249  (idx,y) = (6, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f32f2c20d] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[29] name=[hospital2] type=[LINEAR]
+	inla_parse_linear...
+		section[hospital2]
+		dir=[fixed.effect00000026]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 2/249  (idx,y) = (2, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f5fa1fd9c] 9/249  (idx,y) = (9, 1)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[30] name=[hospital3] type=[LINEAR]
+	inla_parse_linear...
+		section[hospital3]
+		dir=[fixed.effect00000027]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 4/249  (idx,y) = (4, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 5/249  (idx,y) = (5, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 7/249  (idx,y) = (7, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 8/249  (idx,y) = (8, 1)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f4113dd1] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[31] name=[hospital4] type=[LINEAR]
+	inla_parse_linear...
+		section[hospital4]
+		dir=[fixed.effect00000028]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f7f1666d] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	section=[32] name=[hospital5] type=[LINEAR]
+	inla_parse_linear...
+		section[hospital5]
+		dir=[fixed.effect00000029]
+		file for covariates=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d]
+		read n=[498] entries from file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d]
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 0/249  (idx,y) = (0, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 1/249  (idx,y) = (1, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 2/249  (idx,y) = (2, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 3/249  (idx,y) = (3, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 4/249  (idx,y) = (4, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 5/249  (idx,y) = (5, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 6/249  (idx,y) = (6, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 7/249  (idx,y) = (7, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 8/249  (idx,y) = (8, 0)
+		file=[/Users/goodgolden5/Desktop/paper2023B/inla.model/data.files/file1001f797b822d] 9/249  (idx,y) = (9, 0)
+		prior mean=[0]
+		prior precision=[0.001]
+		compute=[1]
+		output:
+			summary=[1]
+			return.marginals=[1]
+			return.marginals.predictor=[1]
+			nquantiles=[3]  [ 0.025 0.5 0.975 ]
+			ncdf=[0]  [ ]
+	parse section=[36] name=[INLA.pardiso] type=[PARDISO]
+	inla_parse_pardiso...
+		section[INLA.pardiso]
+		verbose[0]
+		debug[0]
+		parallel.reordering[1]
+		nrhs[-1]
+	parse section=[35] name=[INLA.lp.scale] type=[LP.SCALE]
+	inla_parse_lp_scale...
+		section[INLA.lp.scale]
+
+	Index table: number of entries[30], total length[278]
+		tag                            start-index     length
+		Predictor                               0        249
+		primary_caregiver1                    249          1
+		primary_caregiver2                    250          1
+		primary_reason1                       251          1
+		primary_reason2                       252          1
+		employed2                             253          1
+		education1                            254          1
+		education2                            255          1
+		language2                             256          1
+		gender2                               257          1
+		ethnicity2                            258          1
+		race2                                 259          1
+		diagnosis2                            260          1
+		stage1                                261          1
+		stage2                                262          1
+		step2                                 263          1
+		income1                               264          1
+		income2                               265          1
+		household1                            266          1
+		household2                            267          1
+		household3                            268          1
+		age                                   269          1
+		relationship2                         270          1
+		relationship3                         271          1
+		hours1                                272          1
+		hours2                                273          1
+		hospital2                             274          1
+		hospital3                             275          1
+		hospital4                             276          1
+		hospital5                             277          1
+	None hyperparameters
+
+	parse section=[33] name=[INLA.Parameters] type=[INLA]
+	inla_parse_INLA...
+		section[INLA.Parameters]
+			lincomb.derived.correlation.matrix = [No]
+		global_node.factor = 2.000
+		global_node.degree = 2147483647
+		reordering = -1
+		constr.marginal.diagonal = 1.49e-08
+Contents of ai_param 0x1010fc1c0
+	Optimiser: DEFAULT METHOD
+		Option for GSL-BFGS2: tol  = 0.1
+		Option for GSL-BFGS2: step_size = 1
+		Option for GSL-BFGS2: epsx = 0.005
+		Option for GSL-BFGS2: epsf = 0.01
+		Option for GSL-BFGS2: epsg = 0.005
+		Restart: 0
+		Optimise: try to be smart: Yes
+		Optimise: use directions: Yes
+		Mode known: No
+		parallel linesearch [0]
+	Gaussian approximation:
+		tolerance_func = 0.0005
+		tolerance_step = 0.001
+		optpar_fp = 0
+		optpar_nr_step_factor = -0.1
+	Gaussian data: No
+	Strategy: 	Use a mean-skew corrected Gaussian by fitting a Skew-Normal
+	Fast mode: 	On
+	Use linear approximation to log(|Q +c|)? Yes
+		Method:	 Compute the derivative exact
+	Parameters for improved approximations
+		Number of points evaluate:	 9
+		Step length to compute derivatives numerically:	 0.0001
+		Stencil to compute derivatives numerically:	 5
+		Cutoff value to construct local neigborhood:	 0.0001
+	Log calculations:	 On
+	Log calculated marginal for the hyperparameters:	 On
+	Integration strategy:	 Automatic (GRID for dim(theta)=1 and 2 and otherwise CCD)
+		f0 (CCD only):	 1.100
+		dz (GRID only):	 0.750
+		Adjust weights (GRID only):	 On
+		Difference in log-density limit (GRID only):	 6.000
+		Skip configurations with (presumed) small density (GRID only):	 On
+	Gradient is computed using Central difference with step-length 0.005000
+	Hessian is computed using Central difference with step-length 0.070711
+	Hessian matrix is forced to be a diagonal matrix? [No]
+	Compute effective number of parameters? [Yes]
+	Perform a Monte Carlo error-test? [No]
+	Interpolator [Auto]
+	CPO required diff in log-density [3]
+	Stupid search mode:
+		Status     [On]
+		Max iter   [1000]
+		Factor     [1.05]
+	Numerical integration of hyperparameters:
+		Maximum number of function evaluations [100000]
+		Relative error ....................... [1e-05]
+		Absolute error ....................... [1e-06]
+	To stabilise the numerical optimisation:
+		Minimum value of the -Hessian [-inf]
+		Strategy for the linear term [Skip]
+	CPO manual calculation[No]
+	VB correction is [Enabled]
+		strategy            = [mean]
+		verbose             = [Yes]
+		f_enable_limit_mean = [30]
+		f_enable_limit_var  = [25]
+		iter_max            = [25]
+		emergency           = [25.00]
+		hessian_update      = [2]
+		hessian_strategy    = [full]
+inla_build: check for unused entries in[/Users/goodgolden5/Desktop/paper2023B/inla.model/Model.ini]
+inla_INLA_preopt_experimental...
+	Strategy = [DEFAULT]
+	Mode....................... [Compact]
+	Setup...................... [0.00s]
+	Sparse-matrix library...... [taucs]
+	OpenMP strategy............ [small]
+	num.threads................ [8:1]
+	blas.num.threads........... [1]
+	Density-strategy........... [High]
+	Size of graph.............. [29]
+	Number of constraints...... [0]
+	Optimizing sort2 cut-off... [318]
+	Optimizing Qx-strategy..... serial[0.333] parallel [0.667] choose[serial]
+	Optimizing pred-strategy... plain [0.609] data-rich[0.391] choose[data-rich]
+	Optimizing dot-products.... plain....[0.181] group....[0.319]
+	                            plain.mkl[0.181] group.mkl[0.319]
+	                            ==> optimal.mix.strategy  [0.000]
+	                                plain....[87.9%] group....[12.1%]
+	                                plain.mkl[ 0.0%] group.mkl[ 0.0%]
+	Found optimal reordering=[metis] nnz(L)=[29] and use_global_nodes(user)=[no]
+	None hyperparameters
+
+
+Compute initial values...
+	Iter[0] RMS(err) = 1.000, update with step-size = 0.221
+	Iter[1] RMS(err) = 0.988, update with step-size = 0.116
+	Iter[2] RMS(err) = 0.980, update with step-size = 0.226
+	Iter[3] RMS(err) = 0.974, update with step-size = 0.117
+	Iter[4] RMS(err) = 0.969, update with step-size = 0.230
+	Iter[5] RMS(err) = 0.966, update with step-size = 0.118
+	Iter[6] RMS(err) = 0.963, update with step-size = 0.233
+	Iter[7] RMS(err) = 0.961, update with step-size = 0.119
+	Iter[8] RMS(err) = 0.960, update with step-size = 0.236
+	Iter[9] RMS(err) = 0.958, update with step-size = 0.119
+	Initial values computed in 0.0010 seconds
+		x[0] = 0.0001
+		x[1] = 0.0006
+		x[2] = 0.0072
+		x[3] = -0.0044
+		x[4] = 0.0023
+		x[24] = 0.0003
+		x[25] = 0.0086
+		x[26] = -0.0004
+		x[27] = -0.0039
+		x[28] = 0.0134
+
+maxld= -281.605 fn=  1 theta= [6.0, 0.00]
+	[0]Iter [0/25] VB correct with strategy [MEAN] in total[0.006sec] hess/grad[7.137]
+		Number of nodes corrected for [29] max(dx/sd)[1.8489]
+	[0]Iter [1/25] VB correct with strategy [MEAN] in total[0.007sec] hess/grad[nan]
+		Number of nodes corrected for [29] max(dx/sd)[0.3962]
+	[0]Iter [2/25] VB correct with strategy [MEAN] in total[0.007sec] hess/grad[nan]
+		Number of nodes corrected for [29] max(dx/sd)[0.2100]
+	[0]Iter [3/25] VB correct with strategy [MEAN] in total[0.008sec] hess/grad[nan]
+		Number of nodes corrected for [29] max(dx/sd)[0.0794]
+	[0]Iter [4/25] VB correct with strategy [MEAN] in total[0.008sec] hess/grad[nan]
+		Number of nodes corrected for [29] max(dx/sd)[0.0187]
+	[0]Iter [5/25] VB correct with strategy [MEAN] in total[0.008sec] hess/grad[nan]
+		Number of nodes corrected for [29] max(dx/sd)[0.0031]
+		Node[0] delta[0.022] dx/sd[0.003] |x-mode|/sd[-1.072]
+		Node[1] delta[0.022] dx/sd[0.003] |x-mode|/sd[-1.074]
+		Node[2] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.116]
+		Node[3] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.028]
+		Node[4] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[0.052]
+		Node[5] delta[-0.022] dx/sd[-0.003] |x-mode|/sd[1.143]
+		Node[6] delta[-0.022] dx/sd[-0.003] |x-mode|/sd[1.133]
+		Node[7] delta[0.000] dx/sd[0.000] |x-mode|/sd[-0.259]
+		Node[8] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.142]
+		Node[9] delta[0.000] dx/sd[0.000] |x-mode|/sd[-0.112]
+		Node[10] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[0.118]
+		Node[11] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.152]
+		Node[12] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.153]
+		Node[13] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.164]
+		Node[14] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.055]
+		Node[15] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.038]
+		Node[16] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[0.042]
+		Node[17] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.147]
+		Node[18] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.180]
+		Node[19] delta[-0.000] dx/sd[-0.000] |x-mode|/sd[-0.224]
+		Node[20] delta[0.000] dx/sd[0.000] |x-mode|/sd[-0.005]
+		Node[21] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.209]
+		Node[22] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.140]
+		Node[23] delta[0.000] dx/sd[0.000] |x-mode|/sd[-0.227]
+		Node[24] delta[0.000] dx/sd[0.000] |x-mode|/sd[-0.139]
+		Node[25] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.201]
+		Node[26] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.140]
+		Node[27] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.079]
+		Node[28] delta[0.000] dx/sd[0.000] |x-mode|/sd[0.251]
+		Implied correction for [249] nodes
+config  0/1=[ ] log(rel.dens)=  0.000, [0] accept, compute, 0.01s
+
+Combine the densities with relative weights:
+config  0/ 1=[ ] weight=  1.000 adjusted weight=  1.000
+
+DIC:
+	Mean of Deviance ................. 336.559
+	Deviance at Mean ................. 310.276
+	Effective number of parameters ... 26.2825
+	DIC .............................. 362.841
+DIC (Saturated):
+	Mean of Deviance ................. 336.558
+	Deviance at Mean ................. 310.276
+	Effective number of parameters ... 26.2825
+	DIC .............................. 362.841
+Store results in directory[/Users/goodgolden5/Desktop/paper2023B/inla.model/results.files]
+
+Wall-clock time used on [/Users/goodgolden5/Desktop/paper2023B/inla.model/Model.ini]
+	Preparations             :   0.011 seconds
+	Approx inference (stage1):   0.026 seconds
+	Approx inference (stage2):   0.000 seconds
+	Approx inference (total) :   0.026 seconds
+	Output                   :   0.035 seconds
+	------------------------------------------
+	Total                    :   0.071 seconds
+
+Stage1:	Number of fn-calls= 1 with 0.0259 sec/fn-call
+Stage2:	Number of fn-calls= 0 with 0.0260 sec/fn-call
+Stage1:	Accumulated CPU-time is equivalent to 1.45 threads running at 100%
+	Efficiency using 8 threads = 18.13%
+Stage2:	Accumulated CPU-time is equivalent to 0.99 threads running at 100%
+	Efficiency using 8 threads = 12.37%
+Total:	Accumulated CPU-time is equivalent to 1.45 threads running at 100%
+	Efficiency using 8 threads = 18.13%
+
