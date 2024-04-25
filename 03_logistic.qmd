@@ -90,7 +90,7 @@ tidy(ps_mod1)
 ```{r "inla_logistic"}
 
 
-inla1 <-randomize ~ 0 + primary_caregiver + primary_reason + employed + 
+inla1 <- randomize ~ 0 + primary_caregiver + primary_reason + employed + 
                       education + language + gender + ethnicity + race + diagnosis +
                       stage + step + income + household + age + 
                       relationship + hours + hospital

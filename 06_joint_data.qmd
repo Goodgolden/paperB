@@ -1,0 +1,129 @@
+---
+title: "06_joint_model_data"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE,
+                      comment = "#>",
+                      #results = "hide",
+                      digits = 4,
+                      error = FALSE)
+
+## clean the R environment
+graphics.off()
+rm(list = ls())
+freshr::freshr()
+
+## load packages
+library(here, quietly = TRUE)
+library(tidyverse, quietly = TRUE)
+library(broom.mixed)
+
+## check the directory for the file
+# here::dr_here()
+here::set_here()
+
+## the figure or results should be saved 
+# paste0("foldername/Sfilename_workingresult_", 
+#      Sys.Date(), ".filetype")
+```
+
+```{css, echo=FALSE}
+.scroll-100 {
+  max-height: 300px;
+  max-width: 1000px;
+  overflow-y: auto;
+  background-color: inherit;
+}
+```
+
+```{r}
+load("new_data/demo_clean_caregiver_merge_2_2023-11-02.Rdata") 
+load("new_data/demo_clean_patient_merge_2_2023-12-13.Rdata")
+pc_pair <- read_csv("new_data/s1_clean_paired_demo_score_factor_2023-12-13.csv") %>%
+  janitor::clean_names()
+
+patient_table_2 <- patient_table_2 %>%
+  filter(pid %in% pc_pair$pid) %>%
+  drop_na()
+ 
+# View(caregiver_table_2)
+# View(patient_table_2)
+# names(caregiver_table_2)
+# names(patient_table_2)
+```
+
+```{r}
+
+cps_mod1 <- glm(randomize ~ 0 +  age + gender + language + ethnicity + 
+                  race + primary_caregiver + primary_reason + hours + 
+                  household + hospital + relationship + employed + 
+                  education + income + diagnosis +
+                      stage + step,
+                    data = caregiver_table_2,
+                    family = binomial("logit"))
+
+
+pps_mod1 <- glm(randomize ~ 0 + age + ethnicity + gender + language +  race + 
+                  primary_reason + household  + hospital + relationship + employed + 
+                  education + income + diagnosis + stage + step,
+                    data = patient_table_2,
+                    family = binomial("logit"))
+```
+
+```{r, class.output="scroll-100"}
+cp_res <- predict(cps_mod1, type = "response")
+cp_link <- predict(cps_mod1, type = "link")
+
+pp_res <- predict(cps_mod1, type = "response")
+pp_link <- predict(cps_mod1, type = "link")
+```
+
+```{r}
+ctbl2 <- caregiver_table_2%>%
+  mutate(cps = augment(cps_mod1,
+                      type.predict = "response")$.fitted) %>%
+  mutate(cweights = ifelse(randomize == 1, 
+                          1 / cps, 1 / (1 - cps))) %>%
+  select(cid, pid, cps, cweights)
+ptbl2 <- patient_table_2 %>%
+  mutate(pps = augment(pps_mod1,
+                      type.predict = "response")$.fitted) %>%
+  mutate(pweights = ifelse(randomize == 1, 
+                          1 / pps, 1 / (1 - pps))) %>%
+  select(cid, pid, pps, pweights)
+
+# nrow(ptbl2)
+```
+
+
+```{r, class.output="scroll-100"}
+ctbl2; ptbl2
+```
+
+
+```{r}
+pc_long <- pc_pair %>%
+  mutate(cid = as.character(cid),
+         pid = as.character(pid)) %>%
+  inner_join(ctbl2, by = join_by(cid, pid)) %>%
+  inner_join(ptbl2, by = join_by(cid, pid)) %>%
+  dplyr::select(cid, pid, everything()) %>%
+  mutate(randomize = case_when(randomize_patient == "Missing" ~ "Treatment",
+                               randomize_patient == "Usual care" ~ "Usual Care")) %>%
+  dplyr::select(-randomize_patient, -randomize_caregiver) %>%
+  dplyr::select(cid, pid, cps, pps, cweights, pweights, time, order(colnames(.)))
+
+# length(pc_long$cid)
+# length(pc_long$pid)
+```
+
+```{r}
+save(pc_long, file = paste0("new_data/pcori_caregiver_patient_long_",
+                        Sys.Date(), ".Rdata"))
+write.csv(pc_long, file = paste0("new_data/pcori_caregiver_patient_long_",
+                        Sys.Date(), ".csv"))
+
+```

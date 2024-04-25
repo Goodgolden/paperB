@@ -1,0 +1,154 @@
+---
+title: "07_wemix"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,
+                      warnings = FALSE,
+                      message = FALSE,
+                      comment = "",
+                      #results = "hide",
+                      digits = 4,
+                      error = FALSE)
+
+## clean the R environment
+graphics.off()
+rm(list = ls())
+freshr::freshr()
+
+## load packages
+library(here, quietly = TRUE)
+library(tidyverse, quietly = TRUE)
+library(WeMix, quietly = TRUE)
+library(twang)
+library(broom.mixed)
+library(tictoc)
+
+## check the directory for the file
+here::set_here()
+
+
+## the figure or results should be saved 
+# paste0("foldername/Sfilename_workingresult_", 
+#      Sys.Date(), ".filetype")
+
+```
+
+## WeMix package is the not what we want to have
+
+The purpose for this project has three levels: 1. multivariate longitudinal outcomes; 
+2. joint model for shared random effects; 3. **different** weights for the each joint sub-model.
+
+- it cannot fit the joint model
+- it cannot provide the weights
+
+```         
+ps_mod1 <- glm(randomize ~ 0 + primary_caregiver + primary_reason + 
+                            employed + education + language + gender + 
+                            ethnicity + race + diagnosis + 
+                            stage + step + income + household + age + 
+                            relationship + hours + hospital,
+                            data = caregiver_table_2,
+                            family = binomial("logit"))
+```
+
+```{r}
+
+pc_pair <- read.csv("new_data/pcori_caregiver_patient_long2024-02-02.csv",
+                    row.names = 1) %>%
+  mutate(W1 = weights,
+         W2 = 1,
+         logzbi_c = log(zbi_c),
+         randomize = case_when(randomize.patient == "Missing" ~ "Treatment",
+                               randomize.patient == "Usual care" ~ "Usual Care")) %>%
+  dplyr::select(-randomize.patient, -randomize.caregiver)
+
+cfit0 <- mix(zbi_c ~ 0 + randomize * time + (1 | cid),
+             data = pc_pair,
+             weights = c("W1", "W2"),
+             nQuad = 50,
+             verbose = TRUE, 
+             run = TRUE)
+pfit0 <- mix(cops_p ~ 0 + randomize * time + (1 | pid),
+             data = pc_pair,
+             weights = c("W1", "W2"),
+             nQuad = 30,
+             verbose = TRUE, 
+             run = TRUE)
+
+summary(cfit0)
+summary(pfit0)
+random <- cfit0$ranefs[[2]] %>%
+  as.data.frame() %>%
+  rownames_to_column("cid") %>%
+  mutate(random = V1)
+
+# predict(cfit0, type = "response") 
+# cfit0$coef
+# cfit0$ranefs[[2]]
+# pfit0$ranefs[[2]]
+
+pc_pair1 <- pc_pair %>%
+  mutate(cid = as.character(cid),
+         cfit1 = predict(cfit0, type = "response"),
+         pfit1 = predict(pfit0, type = "response")) %>%
+  full_join(random) %>%
+  select(pfit1, cops_p, cfit1, zbi_c, random, W1,everything())
+
+summary(cfit0)
+
+summary(pc_pair1)
+```
+
+There are some problems with this method. Here is the histogram for the random effects and residuals.
+
+```{r}
+hist(cfit0$ranefs[[2]])
+hist(pfit0$ranefs[[2]])
+
+hist(cfit0$resid)
+hist(pfit0$resid)
+
+hist(pc_pair1$zbi_c)
+hist(pc_pair1$cops_p)
+
+hist(pc_pair1$W1)
+```
+
+```{r}
+cfit1 <- mix(zbi_c ~ 0 + randomize * time + (1 | cid),
+             data = pc_pair,
+             weights = c("W2", "W2"),
+             nQuad = 50,
+             verbose = TRUE, 
+             run = TRUE)
+```
+
+```{r}
+cfit0
+cfit1
+```
+
+
+## mvglmer package
+
+mvglmer is a package that can fit the multivariate mixed model. 
+but I am not sure whether it can add weights, let alone two weights.
+
+The best we can do is to merge the two functions together.
+
+```{r}
+library(JMbayes)
+View(mvglmer)
+View(mix)
+View(lm)
+View(model.weights)
+
+library(devtools)
+
+```
+
+
+
+
+```{r}
